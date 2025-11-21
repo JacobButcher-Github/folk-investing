@@ -1,0 +1,9 @@
+{
+  "name": "tower-investing-frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "svelte": "^5.43.14"
+  }
+}
