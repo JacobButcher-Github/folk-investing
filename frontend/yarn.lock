@@ -111,6 +111,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"folk-investing-frontend@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "folk-investing-frontend@workspace:."
+  dependencies:
+    svelte: "npm:^5.43.14"
+  languageName: unknown
+  linkType: soft
+
 "is-reference@npm:^3.0.3":
   version: 3.0.3
   resolution: "is-reference@npm:3.0.3"
@@ -157,14 +165,6 @@ __metadata:
   checksum: 10c0/964177e2337b80b2c2fd1768a96988e948db46b0ad25760da3c34550a9781cbb511a29db3083ed0a914899d4ac3adf3b248f1d7230749a5976d5aa97492cb3c2
   languageName: node
   linkType: hard
-
-"tower-investing-frontend@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "tower-investing-frontend@workspace:."
-  dependencies:
-    svelte: "npm:^5.43.14"
-  languageName: unknown
-  linkType: soft
 
 "zimmerframe@npm:^1.1.2":
   version: 1.1.4
