@@ -1,0 +1,9 @@
+--TABLES
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_login TEXT UNIQUE NOT NULL,
+  user_pass TEXT NOT NULL,
+  display_name TEXT,
+  dollars INTEGER DEFAULT 100,
+  cents INTEGER DEFAULT 0
+);
