@@ -9,6 +9,7 @@ import (
 )
 
 type SiteSetting struct {
+	ID                    int64
 	NumberOfEventsVisible sql.NullInt64
 	ValueSymbol           interface{}
 	EventLabel            interface{}
