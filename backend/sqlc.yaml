@@ -2,7 +2,7 @@
 version: "2"
 sql:
   - engine: "sqlite"
-    path: "db/sqlc"
+    # path: "db/sqlc"
     queries: "./db/query"
     schema: "./db/migration"
     gen:
