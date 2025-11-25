@@ -25,9 +25,9 @@ type StockDatum struct {
 	ID           int64
 	StockID      int64
 	EventLabel   string
-	ValueDollars float64
-	ValueCents   float64
-	Sequence     interface{}
+	ValueDollars int64
+	ValueCents   int64
+	Sequence     int64
 }
 
 type User struct {

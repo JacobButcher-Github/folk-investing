@@ -1,5 +1,5 @@
 --TABLES
-CREATE TABLE IF NOT EXISTS stock (
+CREATE TABLE IF NOT EXISTS stocks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT UNIQUE NOT NULL,
   image_path TEXT
@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS stock_data (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   stock_id INTEGER NOT NULL,
   event_label TEXT NOT NULL,
-  value_dollars REAL NOT NULL,
-  value_cents REAL NOT NULL,
-  sequence INTEGER NOT NULL AUTOINCREMENT,
+  value_dollars INTEGER NOT NULL,
+  value_cents INTEGER NOT NULL,
+  sequence INTEGER NOT NULL,
   FOREIGN KEY (stock_id) REFERENCES stocks (id)
 );

@@ -28,4 +28,4 @@ SET
   dollars = COALESCE(sqlc.narg (dollars), dollars),
   cents = COALESCE(sqlc.narg (cents), cents)
 WHERE
-  user_login = sqlc.arg (user_login) RETURNING *
+  user_login = sqlc.arg (user_login) RETURNING *;
