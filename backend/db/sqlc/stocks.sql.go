@@ -29,15 +29,9 @@ func (q *Queries) CreateStock(ctx context.Context, arg CreateStockParams) error 
 
 const createStockData = `-- name: CreateStockData :exec
 INSERT INTO
-  stock_data (
-    stock_id,
-    event_label,
-    value_dollars,
-    value_cents,
-    sequence
-  )
+  stock_data (stock_id, event_label, value_dollars, value_cents)
 VALUES
-  (?, ?, ?, ?, ?)
+  (?, ?, ?, ?)
 `
 
 type CreateStockDataParams struct {
@@ -45,7 +39,6 @@ type CreateStockDataParams struct {
 	EventLabel   string
 	ValueDollars int64
 	ValueCents   int64
-	Sequence     int64
 }
 
 func (q *Queries) CreateStockData(ctx context.Context, arg CreateStockDataParams) error {
@@ -54,7 +47,6 @@ func (q *Queries) CreateStockData(ctx context.Context, arg CreateStockDataParams
 		arg.EventLabel,
 		arg.ValueDollars,
 		arg.ValueCents,
-		arg.Sequence,
 	)
 	return err
 }
@@ -85,7 +77,7 @@ FROM
 WHERE
   stock_id = ?
 ORDER BY
-  sequence ASC
+  id ASC
 LIMIT
   ?
 `
@@ -121,7 +113,7 @@ WHERE
     WHERE
       sd.stock_id = ?
     ORDER BY
-      sd.sequence DESC
+      sd.id DESC
     LIMIT
       ?
   )
@@ -157,5 +149,47 @@ func (q *Queries) UpdateStock(ctx context.Context, arg UpdateStockParams) (Stock
 	row := q.db.QueryRowContext(ctx, updateStock, arg.NewName, arg.ImagePath, arg.Name)
 	var i Stock
 	err := row.Scan(&i.ID, &i.Name, &i.ImagePath)
+	return i, err
+}
+
+const updateStockData = `-- name: UpdateStockData :one
+UPDATE stock_data
+SET
+  stock_id = COALESCE(?1, stock_id),
+  stock_id = COALESCE(?2, event_label),
+  stock_id = COALESCE(?3, value_dollars),
+  stock_id = COALESCE(?4, value_cents)
+WHERE
+  stock_id = ?5
+  AND event_label = ?6 RETURNING id, stock_id, event_label, value_dollars, value_cents, sequence
+`
+
+type UpdateStockDataParams struct {
+	NewID        sql.NullInt64
+	NewLabel     sql.NullInt64
+	ValueDollars sql.NullInt64
+	ValueCents   sql.NullInt64
+	StockID      int64
+	EventLabel   string
+}
+
+func (q *Queries) UpdateStockData(ctx context.Context, arg UpdateStockDataParams) (StockDatum, error) {
+	row := q.db.QueryRowContext(ctx, updateStockData,
+		arg.NewID,
+		arg.NewLabel,
+		arg.ValueDollars,
+		arg.ValueCents,
+		arg.StockID,
+		arg.EventLabel,
+	)
+	var i StockDatum
+	err := row.Scan(
+		&i.ID,
+		&i.StockID,
+		&i.EventLabel,
+		&i.ValueDollars,
+		&i.ValueCents,
+		&i.Sequence,
+	)
 	return i, err
 }

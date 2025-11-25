@@ -24,15 +24,9 @@ WHERE
 
 -- name: CreateStockData :exec
 INSERT INTO
-  stock_data (
-    stock_id,
-    event_label,
-    value_dollars,
-    value_cents,
-    sequence
-  )
+  stock_data (stock_id, event_label, value_dollars, value_cents)
 VALUES
-  (?, ?, ?, ?, ?);
+  (?, ?, ?, ?);
 
 -- name: PruneStockData :exec
 DELETE FROM stock_data
@@ -46,7 +40,7 @@ WHERE
     WHERE
       sd.stock_id = ?
     ORDER BY
-      sd.sequence DESC
+      sd.id DESC
     LIMIT
       ?
   );
@@ -59,6 +53,17 @@ FROM
 WHERE
   stock_id = ?
 ORDER BY
-  sequence ASC
+  id ASC
 LIMIT
   ?;
+
+-- name: UpdateStockData :one
+UPDATE stock_data
+SET
+  stock_id = COALESCE(sqlc.narg (new_id), stock_id),
+  stock_id = COALESCE(sqlc.narg (new_label), event_label),
+  stock_id = COALESCE(sqlc.narg (value_dollars), value_dollars),
+  stock_id = COALESCE(sqlc.narg (value_cents), value_cents)
+WHERE
+  stock_id = sqlc.arg (stock_id)
+  AND event_label = sqlc.arg (event_label) RETURNING *;
