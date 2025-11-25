@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS stock_data (
   event_label TEXT NOT NULL,
   value_dollars INTEGER NOT NULL,
   value_cents INTEGER NOT NULL,
-  sequence INTEGER NOT NULL,
   UNIQUE (stock_id, event_label),
   FOREIGN KEY (stock_id) REFERENCES stocks (id)
 );

@@ -27,7 +27,6 @@ type StockDatum struct {
 	EventLabel   string
 	ValueDollars int64
 	ValueCents   int64
-	Sequence     int64
 }
 
 type User struct {

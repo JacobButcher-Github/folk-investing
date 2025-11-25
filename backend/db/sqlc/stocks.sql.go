@@ -71,7 +71,7 @@ func (q *Queries) GetStock(ctx context.Context, name string) (Stock, error) {
 
 const getStockData = `-- name: GetStockData :one
 SELECT
-  id, stock_id, event_label, value_dollars, value_cents, sequence
+  id, stock_id, event_label, value_dollars, value_cents
 FROM
   stock_data
 WHERE
@@ -96,7 +96,6 @@ func (q *Queries) GetStockData(ctx context.Context, arg GetStockDataParams) (Sto
 		&i.EventLabel,
 		&i.ValueDollars,
 		&i.ValueCents,
-		&i.Sequence,
 	)
 	return i, err
 }
@@ -161,7 +160,7 @@ SET
   stock_id = COALESCE(?4, value_cents)
 WHERE
   stock_id = ?5
-  AND event_label = ?6 RETURNING id, stock_id, event_label, value_dollars, value_cents, sequence
+  AND event_label = ?6 RETURNING id, stock_id, event_label, value_dollars, value_cents
 `
 
 type UpdateStockDataParams struct {
@@ -189,7 +188,6 @@ func (q *Queries) UpdateStockData(ctx context.Context, arg UpdateStockDataParams
 		&i.EventLabel,
 		&i.ValueDollars,
 		&i.ValueCents,
-		&i.Sequence,
 	)
 	return i, err
 }
