@@ -1,8 +1,8 @@
--- name: CreateStock :exec
+-- name: CreateStock :one
 INSERT INTO
   stocks (name, image_path)
 VALUES
-  (?, ?);
+  (?, ?) RETURNING *;
 
 -- name: GetStock :one
 SELECT
@@ -22,11 +22,16 @@ SET
 WHERE
   name = sqlc.arg (name) RETURNING *;
 
--- name: CreateStockData :exec
+-- name: DeleteStock :exec
+DELETE FROM stocks
+WHERE
+  name = ?;
+
+-- name: CreateStockData :one
 INSERT INTO
   stock_data (stock_id, event_label, value_dollars, value_cents)
 VALUES
-  (?, ?, ?, ?);
+  (?, ?, ?, ?) RETURNING *;
 
 -- name: PruneStockData :exec
 DELETE FROM stock_data

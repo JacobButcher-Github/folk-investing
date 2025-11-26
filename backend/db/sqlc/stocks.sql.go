@@ -10,11 +10,11 @@ import (
 	"database/sql"
 )
 
-const createStock = `-- name: CreateStock :exec
+const createStock = `-- name: CreateStock :one
 INSERT INTO
   stocks (name, image_path)
 VALUES
-  (?, ?)
+  (?, ?) RETURNING id, name, image_path
 `
 
 type CreateStockParams struct {
@@ -22,16 +22,18 @@ type CreateStockParams struct {
 	ImagePath sql.NullString
 }
 
-func (q *Queries) CreateStock(ctx context.Context, arg CreateStockParams) error {
-	_, err := q.db.ExecContext(ctx, createStock, arg.Name, arg.ImagePath)
-	return err
+func (q *Queries) CreateStock(ctx context.Context, arg CreateStockParams) (Stock, error) {
+	row := q.db.QueryRowContext(ctx, createStock, arg.Name, arg.ImagePath)
+	var i Stock
+	err := row.Scan(&i.ID, &i.Name, &i.ImagePath)
+	return i, err
 }
 
-const createStockData = `-- name: CreateStockData :exec
+const createStockData = `-- name: CreateStockData :one
 INSERT INTO
   stock_data (stock_id, event_label, value_dollars, value_cents)
 VALUES
-  (?, ?, ?, ?)
+  (?, ?, ?, ?) RETURNING id, stock_id, event_label, value_dollars, value_cents
 `
 
 type CreateStockDataParams struct {
@@ -41,13 +43,32 @@ type CreateStockDataParams struct {
 	ValueCents   int64
 }
 
-func (q *Queries) CreateStockData(ctx context.Context, arg CreateStockDataParams) error {
-	_, err := q.db.ExecContext(ctx, createStockData,
+func (q *Queries) CreateStockData(ctx context.Context, arg CreateStockDataParams) (StockDatum, error) {
+	row := q.db.QueryRowContext(ctx, createStockData,
 		arg.StockID,
 		arg.EventLabel,
 		arg.ValueDollars,
 		arg.ValueCents,
 	)
+	var i StockDatum
+	err := row.Scan(
+		&i.ID,
+		&i.StockID,
+		&i.EventLabel,
+		&i.ValueDollars,
+		&i.ValueCents,
+	)
+	return i, err
+}
+
+const deleteStock = `-- name: DeleteStock :exec
+DELETE FROM stocks
+WHERE
+  name = ?
+`
+
+func (q *Queries) DeleteStock(ctx context.Context, name string) error {
+	_, err := q.db.ExecContext(ctx, deleteStock, name)
 	return err
 }
 
