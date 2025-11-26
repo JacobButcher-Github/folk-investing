@@ -1,14 +1,8 @@
 -- name: CreateUser :one
 INSERT INTO
-  users (
-    user_login,
-    hashed_password,
-    display_name,
-    dollars,
-    cents
-  )
+  users (user_login, hashed_password, dollars, cents)
 VALUES
-  (?, ?, ?, ?, ?) RETURNING *;
+  (?, ?, ?, ?) RETURNING *;
 
 -- name: GetUser :one
 SELECT
@@ -24,7 +18,6 @@ LIMIT
 UPDATE users
 SET
   hashed_password = COALESCE(sqlc.narg (hashed_password), hashed_password),
-  display_name = COALESCE(sqlc.narg (full_name), full_name),
   dollars = COALESCE(sqlc.narg (dollars), dollars),
   cents = COALESCE(sqlc.narg (cents), cents)
 WHERE

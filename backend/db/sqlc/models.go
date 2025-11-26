@@ -34,7 +34,6 @@ type User struct {
 	ID             int64
 	UserLogin      string
 	HashedPassword string
-	DisplayName    sql.NullString
 	Dollars        sql.NullInt64
 	Cents          sql.NullInt64
 }

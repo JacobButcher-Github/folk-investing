@@ -12,21 +12,14 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO
-  users (
-    user_login,
-    hashed_password,
-    display_name,
-    dollars,
-    cents
-  )
+  users (user_login, hashed_password, dollars, cents)
 VALUES
-  (?, ?, ?, ?, ?) RETURNING id, user_login, hashed_password, display_name, dollars, cents
+  (?, ?, ?, ?) RETURNING id, user_login, hashed_password, dollars, cents
 `
 
 type CreateUserParams struct {
 	UserLogin      string
 	HashedPassword string
-	DisplayName    sql.NullString
 	Dollars        sql.NullInt64
 	Cents          sql.NullInt64
 }
@@ -35,7 +28,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	row := q.db.QueryRowContext(ctx, createUser,
 		arg.UserLogin,
 		arg.HashedPassword,
-		arg.DisplayName,
 		arg.Dollars,
 		arg.Cents,
 	)
@@ -44,7 +36,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.ID,
 		&i.UserLogin,
 		&i.HashedPassword,
-		&i.DisplayName,
 		&i.Dollars,
 		&i.Cents,
 	)
@@ -53,7 +44,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 
 const getUser = `-- name: GetUser :one
 SELECT
-  id, user_login, hashed_password, display_name, dollars, cents
+  id, user_login, hashed_password, dollars, cents
 FROM
   users
 WHERE
@@ -69,7 +60,6 @@ func (q *Queries) GetUser(ctx context.Context, userLogin string) (User, error) {
 		&i.ID,
 		&i.UserLogin,
 		&i.HashedPassword,
-		&i.DisplayName,
 		&i.Dollars,
 		&i.Cents,
 	)
@@ -80,16 +70,14 @@ const updateUser = `-- name: UpdateUser :one
 UPDATE users
 SET
   hashed_password = COALESCE(?1, hashed_password),
-  display_name = COALESCE(?2, full_name),
-  dollars = COALESCE(?3, dollars),
-  cents = COALESCE(?4, cents)
+  dollars = COALESCE(?2, dollars),
+  cents = COALESCE(?3, cents)
 WHERE
-  user_login = ?5 RETURNING id, user_login, hashed_password, display_name, dollars, cents
+  user_login = ?4 RETURNING id, user_login, hashed_password, dollars, cents
 `
 
 type UpdateUserParams struct {
 	HashedPassword sql.NullString
-	FullName       sql.NullString
 	Dollars        sql.NullInt64
 	Cents          sql.NullInt64
 	UserLogin      string
@@ -98,7 +86,6 @@ type UpdateUserParams struct {
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, updateUser,
 		arg.HashedPassword,
-		arg.FullName,
 		arg.Dollars,
 		arg.Cents,
 		arg.UserLogin,
@@ -108,7 +95,6 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		&i.ID,
 		&i.UserLogin,
 		&i.HashedPassword,
-		&i.DisplayName,
 		&i.Dollars,
 		&i.Cents,
 	)
