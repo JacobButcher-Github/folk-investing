@@ -1,4 +1,4 @@
--- name: CreateUser :exec
+-- name: CreateUser :one
 INSERT INTO
   users (
     user_login,
@@ -8,7 +8,7 @@ INSERT INTO
     cents
   )
 VALUES
-  (?, ?, ?, ?, ?);
+  (?, ?, ?, ?, ?) RETURNING *;
 
 -- name: GetUser :one
 SELECT
