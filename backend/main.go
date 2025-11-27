@@ -4,20 +4,12 @@ import (
 	//stl
 	"log"
 	"net/http"
-	"os"
-	"syscall"
 
 	//import
 	"github.com/gin-gonic/gin"
 	//local
 	// "github.com/JacobButcher-Github/folk-investing/"
 )
-
-var interruptSignals = []os.Signal{
-	os.Interrupt,
-	syscall.SIGTERM,
-	syscall.SIGINT,
-}
 
 func main() {
 	r := gin.Default()
