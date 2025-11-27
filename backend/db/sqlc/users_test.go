@@ -56,16 +56,16 @@ func TestGetUser(t *testing.T) {
 
 func TestUpdateUserPassword(t *testing.T) {
 	oldUser := createRandomUser(t)
-	newPassword := util.RandomString(6)
-	newHashedPassword, err := util.HashPassword(newPassword)
-	require.NoError(t, err)
+	var newHashedPassword string
+	var err error
 
 	for {
+		newPassword := util.RandomString(6)
+		newHashedPassword, err = util.HashPassword(newPassword)
+		require.NoError(t, err)
 		if oldUser.HashedPassword != newHashedPassword {
 			break
 		}
-		newPassword = util.RandomString(6)
-		newHashedPassword, err = util.HashPassword(newPassword)
 	}
 
 	require.NoError(t, err)

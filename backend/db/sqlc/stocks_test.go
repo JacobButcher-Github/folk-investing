@@ -4,6 +4,7 @@ import (
 	//stl
 	"context"
 	"database/sql"
+	"home/osarukun/repos/tower-investing/backend/util"
 	"testing"
 
 	//go package
@@ -73,7 +74,26 @@ func TestGetStock(t *testing.T) {
 }
 
 func TestUpdateStockName(t *testing.T) {
+	oldStock, _ := createRandomStock(t)
+	var newName string
+	for {
+		newName = util.RandomString(16)
+		if oldStock.Name != newName {
+			break
+		}
+	}
 
+	updatedStock, err := testQueries.UpdateStock(context.Background(), UpdateStockParams{
+		NewName:   sql.NullString{String: newName, Valid: true},
+		ImagePath: sql.NullString{String: "", Valid: false},
+		Name:      oldStock.Name,
+	})
+
+	require.NoError(t, err)
+	require.NotEqual(t, updatedStock.Name, oldStock.Name)
+	require.Equal(t, updatedStock.Name, newName)
+	require.Equal(t, oldStock.ID, updatedStock.ID)
+	require.Equal(t, oldStock.ImagePath, updatedStock.ImagePath)
 }
 
 func TestUpdateStockImagePath(t *testing.T) {
