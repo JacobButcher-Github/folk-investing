@@ -4,7 +4,6 @@ import (
 	//stl
 	"context"
 	"database/sql"
-	"home/osarukun/repos/tower-investing/backend/util"
 	"testing"
 
 	//go package
@@ -97,11 +96,51 @@ func TestUpdateStockName(t *testing.T) {
 }
 
 func TestUpdateStockImagePath(t *testing.T) {
+	oldStock, _ := createRandomStock(t)
+	var newImagePath sql.NullString
+	for {
+		newImagePath = sql.NullString{String: util.RandomString(8), Valid: true}
+		if oldStock.ImagePath != newImagePath {
+			break
+		}
+	}
 
+	updatedStock, err := testQueries.UpdateStock(context.Background(), UpdateStockParams{
+		NewName:   sql.NullString{String: "", Valid: false},
+		ImagePath: newImagePath,
+		Name:      oldStock.Name,
+	})
+
+	require.NoError(t, err)
+	require.NotEqual(t, updatedStock.ImagePath, oldStock.ImagePath)
+	require.Equal(t, updatedStock.ImagePath, newImagePath.String)
+	require.Equal(t, oldStock.ID, updatedStock.ID)
+	require.Equal(t, oldStock.Name, updatedStock.Name)
 }
 
 func TestUpdateStockAllFields(t *testing.T) {
+	oldStock, _ := createRandomStock(t)
+	var newName string
+	var newImagePath sql.NullString
+	for {
+		newName = util.RandomString(16)
+		newImagePath = sql.NullString{String: util.RandomString(8), Valid: true}
+		if oldStock.ImagePath != newImagePath && oldStock.Name != newName {
+			break
+		}
+	}
 
+	updatedStock, err := testQueries.UpdateStock(context.Background(), UpdateStockParams{
+		NewName:   sql.NullString{String: newName, Valid: true},
+		ImagePath: newImagePath,
+		Name:      oldStock.Name,
+	})
+
+	require.NoError(t, err)
+	require.NotEqual(t, oldStock.Name, updatedStock.Name)
+	require.NotEqual(t, oldStock.ImagePath, updatedStock.ImagePath)
+	require.Equal(t, newName, updatedStock.Name)
+	require.Equal(t, newImagePath.String, updatedStock.ImagePath)
 }
 
 func TestUpdateStockDataID(t *testing.T) {
