@@ -1,8 +1,8 @@
--- name: CreateUserStock :exec
+-- name: CreateUserStock :one
 INSERT INTO
   user_stocks (user_id, stock_id, quantity)
 VALUES
-  (?, ?, ?);
+  (?, ?, ?) RETURNING *;
 
 -- name: GetUserStock :one
 SELECT

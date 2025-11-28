@@ -9,11 +9,11 @@ import (
 	"context"
 )
 
-const createUserStock = `-- name: CreateUserStock :exec
+const createUserStock = `-- name: CreateUserStock :one
 INSERT INTO
   user_stocks (user_id, stock_id, quantity)
 VALUES
-  (?, ?, ?)
+  (?, ?, ?) RETURNING user_id, stock_id, quantity
 `
 
 type CreateUserStockParams struct {
@@ -22,9 +22,11 @@ type CreateUserStockParams struct {
 	Quantity int64
 }
 
-func (q *Queries) CreateUserStock(ctx context.Context, arg CreateUserStockParams) error {
-	_, err := q.db.ExecContext(ctx, createUserStock, arg.UserID, arg.StockID, arg.Quantity)
-	return err
+func (q *Queries) CreateUserStock(ctx context.Context, arg CreateUserStockParams) (UserStock, error) {
+	row := q.db.QueryRowContext(ctx, createUserStock, arg.UserID, arg.StockID, arg.Quantity)
+	var i UserStock
+	err := row.Scan(&i.UserID, &i.StockID, &i.Quantity)
+	return i, err
 }
 
 const deleteUserStock = `-- name: DeleteUserStock :exec
