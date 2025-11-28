@@ -39,19 +39,26 @@ func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 	return tx.Commit()
 }
 
-type BuyStockParams struct {
-	AccountID int64  `json:"account_id"`
+// BuyStockTxParams contains input parameters of buy stock transaction
+type BuyStockTxParams struct {
+	UserID    int64  `json:"user_id"`
 	StockName string `json:"stock_name"`
 	Amount    int64  `json:"amount"`
 }
 
+// BuyStockTxResult is result of the buy stock transaction
 type BuyStockTxResult struct {
+	User      User      `json:"user"`
+	UserStock UserStock `json:"user_stock"`
+	Stock     Stock     `json:"stock"`
 }
 
 // BuyStockTx performs a money subtraction from an account and adds stock to an account
-// update stock amount in user stock and update user dollar and cents in a single transaction
-func (store *Store) BuyStockTx(ctx context.Context, arg BuyStockParams) (BuyStockTxResult, error) {
+// update stock amount in user stock and update user dollar and cents using latest stock data in a single transaction
+func (store *Store) BuyStockTx(ctx context.Context, arg BuyStockTxParams) (BuyStockTxResult, error) {
+	var result BuyStockTxResult
 
+	return result, err
 }
 
 //selling stock
