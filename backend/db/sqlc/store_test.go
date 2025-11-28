@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"home/osarukun/repos/tower-investing/backend/util"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -12,15 +13,19 @@ func TestBuyStockTx(t *testing.T) {
 
 	randUser := createRandomUser(t)
 	randStock, randStockData := createRandomStock(t)
-	//TODO: Made associated UserStock between randUser and randStock.
+	userStock, err := testQueries.CreateUserStock(context.Background(), CreateUserStockParams{
+		UserID:   randUser.ID,
+		StockID:  randStock.ID,
+		Quantity: util.RandomInt(0, 100),
+	})
 
 	userStartMoney := randUser.Dollars.Int64*100 + randUser.Cents.Int64
 
 	stockCost := randStockData.ValueDollars*100 + randStockData.ValueCents
 
-	//run n concurrent stock buy transactions
+	//run n concurrent stock buy transactions of random amount
 	n := 5
-	amount := int64(1)
+	amount := util.RandomInt(1, 1000)
 	errs := make(chan error)
 	results := make(chan BuyStockTxResult)
 
@@ -70,5 +75,5 @@ func TestBuyStockTx(t *testing.T) {
 
 	userUpdatedMoney := updatedUser.Dollars.Int64*100 + updatedUser.Cents.Int64
 	require.Equal(t, userStartMoney-int64(n)*amount, userUpdatedMoney)
-	//TODO: compare original UserStock amount and updated UserStock amount
+	require.Equal(t, updatedUserStock.Quantity-amount*int64(n), userStock.Quantity)
 }
