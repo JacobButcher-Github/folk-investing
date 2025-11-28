@@ -66,9 +66,9 @@ LIMIT
 UPDATE stock_data
 SET
   stock_id = COALESCE(sqlc.narg (new_id), stock_id),
-  stock_id = COALESCE(sqlc.narg (new_label), event_label),
-  stock_id = COALESCE(sqlc.narg (value_dollars), value_dollars),
-  stock_id = COALESCE(sqlc.narg (value_cents), value_cents)
+  event_label = COALESCE(sqlc.narg (new_label), event_label),
+  value_dollars = COALESCE(sqlc.narg (value_dollars), value_dollars),
+  value_cents = COALESCE(sqlc.narg (value_cents), value_cents)
 WHERE
   stock_id = sqlc.arg (stock_id)
   AND event_label = sqlc.arg (event_label) RETURNING *;

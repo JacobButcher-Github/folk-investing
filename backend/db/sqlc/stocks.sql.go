@@ -176,9 +176,9 @@ const updateStockData = `-- name: UpdateStockData :one
 UPDATE stock_data
 SET
   stock_id = COALESCE(?1, stock_id),
-  stock_id = COALESCE(?2, event_label),
-  stock_id = COALESCE(?3, value_dollars),
-  stock_id = COALESCE(?4, value_cents)
+  event_label = COALESCE(?2, event_label),
+  value_dollars = COALESCE(?3, value_dollars),
+  value_cents = COALESCE(?4, value_cents)
 WHERE
   stock_id = ?5
   AND event_label = ?6 RETURNING id, stock_id, event_label, value_dollars, value_cents
@@ -186,7 +186,7 @@ WHERE
 
 type UpdateStockDataParams struct {
 	NewID        sql.NullInt64
-	NewLabel     sql.NullInt64
+	NewLabel     sql.NullString
 	ValueDollars sql.NullInt64
 	ValueCents   sql.NullInt64
 	StockID      int64
