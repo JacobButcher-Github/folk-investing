@@ -161,6 +161,7 @@ func TestUpdateStockDataID(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEqual(t, updatedStockData.StockID, oldStockData.StockID)
 	require.Equal(t, updatedStockData.StockID, newId)
+	require.Equal(t, updatedStockData.ID, oldStockData.ID)
 	require.Equal(t, oldStockData.EventLabel, updatedStockData.EventLabel)
 	require.Equal(t, oldStockData.ValueDollars, updatedStockData.ValueDollars)
 	require.Equal(t, oldStockData.ValueCents, updatedStockData.ValueCents)
@@ -189,21 +190,93 @@ func TestUpdateStockDataEventLabel(t *testing.T) {
 
 	require.NoError(t, err)
 	require.NotEqual(t, updatedStockData.EventLabel, oldStockData.EventLabel)
-	require.Equal(t, updatedStockData.StockID, newId)
-	require.Equal(t, oldStockData.EventLabel, updatedStockData.EventLabel)
+	require.Equal(t, updatedStockData.EventLabel, newEventLabel)
+	require.Equal(t, oldStockData.ID, updatedStockData.ID)
+	require.Equal(t, oldStockData.StockID, updatedStockData.StockID)
 	require.Equal(t, oldStockData.ValueDollars, updatedStockData.ValueDollars)
 	require.Equal(t, oldStockData.ValueCents, updatedStockData.ValueCents)
-
 }
 
 func TestUpdateStockDataMoney(t *testing.T) {
+	stock, oldStockData := createRandomStock(t)
+	var newDollars int64
+	var newCents int64
 
+	for {
+		newDollars = util.RandomInt(0, 100000)
+		newCents = util.RandomInt(0, 99)
+		if oldStockData.ValueDollars != newDollars && oldStockData.ValueCents != newCents {
+			break
+		}
+	}
+
+	updatedStockData, err := testQueries.UpdateStockData(context.Background(), UpdateStockDataParams{
+		NewID:        sql.NullInt64{Int64: 0, Valid: false},
+		NewLabel:     sql.NullString{String: "", Valid: false},
+		ValueDollars: sql.NullInt64{Int64: newDollars, Valid: false},
+		ValueCents:   sql.NullInt64{Int64: newCents, Valid: false},
+		StockID:      stock.ID,
+		EventLabel:   oldStockData.EventLabel,
+	})
+
+	require.NoError(t, err)
+	require.NotEqual(t, updatedStockData.ValueDollars, oldStockData.ValueDollars)
+	require.NotEqual(t, updatedStockData.ValueCents, oldStockData.ValueCents)
+	require.Equal(t, updatedStockData.ValueDollars, newDollars)
+	require.Equal(t, updatedStockData.ValueCents, newCents)
+	require.Equal(t, oldStockData.ID, updatedStockData.ID)
+	require.Equal(t, oldStockData.StockID, updatedStockData.StockID)
+	require.Equal(t, oldStockData.EventLabel, updatedStockData.EventLabel)
 }
 
 func TestUpdateStockDataAllFields(t *testing.T) {
+	stock, oldStockData := createRandomStock(t)
+	newStock, _ := createRandomStock(t)
+	newId := newStock.ID
+	var newEventLabel string
+	var newDollars int64
+	var newCents int64
 
+	for {
+		newEventLabel = util.RandomString(5)
+		newDollars = util.RandomInt(0, 100000)
+		newCents = util.RandomInt(0, 99)
+		if newEventLabel != oldStockData.EventLabel && newDollars != oldStockData.ValueDollars && newCents != oldStockData.ValueCents {
+			break
+		}
+	}
+
+	updatedStockData, err := testQueries.UpdateStockData(context.Background(), UpdateStockDataParams{
+		NewID:        sql.NullInt64{Int64: newId, Valid: true},
+		NewLabel:     sql.NullString{String: newEventLabel, Valid: true},
+		ValueDollars: sql.NullInt64{Int64: newDollars, Valid: true},
+		ValueCents:   sql.NullInt64{Int64: newCents, Valid: true},
+		StockID:      stock.ID,
+		EventLabel:   oldStockData.EventLabel,
+	})
+
+	require.NoError(t, err)
+	require.NotEqual(t, updatedStockData.EventLabel, oldStockData.EventLabel)
+	require.Equal(t, updatedStockData.EventLabel, newEventLabel)
+	require.NotEqual(t, updatedStockData.ValueDollars, oldStockData.ValueDollars)
+	require.NotEqual(t, updatedStockData.ValueCents, oldStockData.ValueCents)
+	require.Equal(t, updatedStockData.ValueDollars, newDollars)
+	require.Equal(t, updatedStockData.ValueCents, newCents)
+	require.NotEqual(t, updatedStockData.StockID, oldStockData.StockID)
+	require.Equal(t, updatedStockData.StockID, newId)
 }
 
 func TestDeleteStock(t *testing.T) {
-
+	stock, _ := createRandomStock(t)
+	err := testQueries.DeleteStock(context.Background(), stock.Name)
+	require.NoError(t, err)
+	deletedStock, err := testQueries.GetStock(context.Background(), stock.Name)
+	require.NoError(t, err)
+	require.Empty(t, deletedStock)
+	deletedStockData, err := testQueries.GetStockData(context.Background(), GetStockDataParams{
+		StockID: stock.ID,
+		Limit:   1,
+	})
+	require.NoError(t, err)
+	require.Empty(t, deletedStockData)
 }
