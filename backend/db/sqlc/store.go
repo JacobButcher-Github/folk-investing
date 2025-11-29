@@ -21,8 +21,8 @@ func NewStore(db *sql.DB) *Store {
 }
 
 // ExecTx executes a function within a database transaction
-func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
-	tx, err := store.db.BeginTx(ctx, nil)
+func (store *Store) execTx(ctx context.Context, txOption *sql.TxOptions, fn func(*Queries) error) error {
+	tx, err := store.db.BeginTx(ctx, txOption)
 	if err != nil {
 		return err
 	}
@@ -41,9 +41,9 @@ func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 
 // BuyStockTxParams contains input parameters of buy stock transaction
 type BuyStockTxParams struct {
-	UserID    int64  `json:"user_id"`
-	StockName string `json:"stock_name"`
-	Amount    int64  `json:"amount"`
+	UserID  int64 `json:"user_id"`
+	StockID int64 `json:"stock_id"`
+	Amount  int64 `json:"amount"`
 }
 
 // BuyStockTxResult is result of the buy stock transaction
@@ -56,7 +56,62 @@ type BuyStockTxResult struct {
 // BuyStockTx performs a money subtraction from an account and adds stock to an account
 // update stock amount in user stock and update user dollar and cents using latest stock data in a single transaction
 func (store *Store) BuyStockTx(ctx context.Context, arg BuyStockTxParams) (BuyStockTxResult, error) {
+
 	var result BuyStockTxResult
+	err := store.execTx(ctx,
+		&sql.TxOptions{
+			Isolation: sql.LevelSerializable,
+		},
+		func(q *Queries) error {
+			//check if the associated UserStock exists.
+			userStock, err := q.GetUserStock(ctx, GetUserStockParams{
+				UserID:  arg.UserID,
+				StockID: arg.StockID,
+			})
+
+			if err != nil {
+				// Does not exist, create UserStock
+				if err == sql.ErrNoRows {
+
+					userStock, err = q.CreateUserStock(ctx, CreateUserStockParams{
+						UserID:   arg.UserID,
+						StockID:  arg.StockID,
+						Quantity: 0,
+					})
+					if err != nil {
+						return err
+					}
+				} else {
+					//unknown error, handle by returning
+					return err
+				}
+			}
+			//Get the cost of the stock being purchased
+			stockData, err := q.GetStockData(ctx, GetStockDataParams{
+				StockID: userStock.StockID,
+				Limit:   1,
+			})
+			if err != nil {
+				return err
+			}
+
+			//Get user that's purchasing stock
+			user, err := q.GetUserFromId(ctx, userStock.UserID)
+			stockCost := stockData.ValueDollars*100 + stockData.ValueCents
+			//Update the money of the user
+
+			//update value on UserStock.
+
+			updatedUserStock, err := q.UpdateUserStock(ctx, UpdateUserStockParams{
+				Quantity: userStock.Quantity + arg.Amount,
+				UserID:   arg.UserID,
+				StockID:  arg.StockID,
+			})
+			if err != nil {
+				return err
+			}
+			return nil
+		})
 
 	return result, err
 }

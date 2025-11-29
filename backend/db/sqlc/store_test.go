@@ -1,11 +1,15 @@
 package db
 
 import (
+	//stl
 	"context"
-	"home/osarukun/repos/tower-investing/backend/util"
 	"testing"
 
+	//go package
 	"github.com/stretchr/testify/require"
+
+	//local
+	"home/osarukun/repos/tower-investing/backend/util"
 )
 
 func TestBuyStockTx(t *testing.T) {
@@ -32,9 +36,9 @@ func TestBuyStockTx(t *testing.T) {
 	for range n {
 		go func() {
 			result, err := store.BuyStockTx(context.Background(), BuyStockTxParams{
-				UserID:    randUser.ID,
-				StockName: randStock.Name,
-				Amount:    amount,
+				UserID:  randUser.ID,
+				StockID: randStock.ID,
+				Amount:  amount,
 			})
 
 			errs <- err

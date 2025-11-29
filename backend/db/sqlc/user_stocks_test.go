@@ -5,9 +5,10 @@ import (
 	"context"
 	"testing"
 
-	//
+	//go package
 	"github.com/stretchr/testify/require"
 
+	//local
 	"github.com/JacobButcher-Github/folk-investing/backend/util"
 )
 

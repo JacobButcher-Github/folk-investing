@@ -4,7 +4,17 @@ INSERT INTO
 VALUES
   (?, ?, ?, ?) RETURNING *;
 
--- name: GetUser :one
+-- name: GetUserFromId :one
+SELECT
+  *
+FROM
+  users
+WHERE
+  id = ?
+LIMIT
+  1;
+
+-- name: GetUserFromName :one
 SELECT
   *
 FROM
