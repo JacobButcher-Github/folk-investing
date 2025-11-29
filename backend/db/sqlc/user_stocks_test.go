@@ -48,14 +48,24 @@ func TestGetUserStock(t *testing.T) {
 }
 
 func TestUpdateUserStock(t *testing.T) {
-	userStock1 := createRandomUserStock(t)
+	userStock := createRandomUserStock(t)
 	var newQuantity int64
 	for {
 		newQuantity = util.randomInt(1, 99)
-		if newQuantity != userStock1.Quantity {
+		if newQuantity != userStock.Quantity {
 			break
 		}
 	}
 
-	//TODO: update the userstock use the return value as userstock2, compare.
+	updatedUserStock, err := testQueries.UpdateUserStock(context.Background(), UpdateUserStockParams{
+		Quantity: newQuantity,
+		UserID:   userStock.UserID,
+		StockID:  userStock.StockID,
+	})
+
+	require.NoError(t, err)
+	require.NotEqual(t, userStock.Quantity, updatedUserStock.Quantity)
+	require.Equal(t, updatedUserStock.Quantity, newQuantity)
+	require.Equal(t, userStock.UserID, updatedUserStock.UserID)
+	require.Equal(t, userStock.StockID, updatedUserStock.StockID)
 }
