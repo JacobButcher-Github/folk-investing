@@ -50,13 +50,11 @@ type BuyStockTxParams struct {
 type BuyStockTxResult struct {
 	User      User      `json:"user"`
 	UserStock UserStock `json:"user_stock"`
-	Stock     Stock     `json:"stock"`
 }
 
 // BuyStockTx performs a money subtraction from an account and adds stock to an account
 // update stock amount in user stock and update user dollar and cents using latest stock data in a single transaction
 func (store *Store) BuyStockTx(ctx context.Context, arg BuyStockTxParams) (BuyStockTxResult, error) {
-
 	var result BuyStockTxResult
 	err := store.execTx(ctx,
 		&sql.TxOptions{
@@ -95,13 +93,29 @@ func (store *Store) BuyStockTx(ctx context.Context, arg BuyStockTxParams) (BuySt
 				return err
 			}
 
+			stockCost := stockData.ValueDollars*100 + stockData.ValueCents
+
 			//Get user that's purchasing stock
 			user, err := q.GetUserFromId(ctx, userStock.UserID)
-			stockCost := stockData.ValueDollars*100 + stockData.ValueCents
+			if err != nil {
+				return err
+			}
+
+			userMoney := user.Dollars.Int64*100 + user.Cents.Int64
+
 			//Update the money of the user
+			newUserMoney := userMoney - stockCost*arg.Amount
+
+			updatedUser, err := q.UpdateUser(ctx, UpdateUserParams{
+				Dollars:   sql.NullInt64{Int64: newUserMoney / 100, Valid: true},
+				Cents:     sql.NullInt64{Int64: newUserMoney % 100, Valid: true},
+				UserLogin: user.UserLogin,
+			})
+			if err != nil {
+				return err
+			}
 
 			//update value on UserStock.
-
 			updatedUserStock, err := q.UpdateUserStock(ctx, UpdateUserStockParams{
 				Quantity: userStock.Quantity + arg.Amount,
 				UserID:   arg.UserID,
@@ -110,9 +124,10 @@ func (store *Store) BuyStockTx(ctx context.Context, arg BuyStockTxParams) (BuySt
 			if err != nil {
 				return err
 			}
+			result.User = updatedUser
+			result.UserStock = updatedUserStock
 			return nil
 		})
-
 	return result, err
 }
 
