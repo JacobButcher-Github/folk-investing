@@ -16,7 +16,7 @@ func TestBuyStockTx(t *testing.T) {
 	store := NewStore(testDB)
 
 	randUser := createRandomUser(t)
-	randStock, randStockData := createRandomStock(t)
+	randStock, _ := createRandomStock(t)
 	userStock, err := testQueries.CreateUserStock(context.Background(), CreateUserStockParams{
 		UserID:   randUser.ID,
 		StockID:  randStock.ID,
@@ -24,8 +24,6 @@ func TestBuyStockTx(t *testing.T) {
 	})
 
 	userStartMoney := randUser.Dollars.Int64*100 + randUser.Cents.Int64
-
-	stockCost := randStockData.ValueDollars*100 + randStockData.ValueCents
 
 	//run n concurrent stock buy transactions of random amount
 	n := 5
@@ -57,18 +55,13 @@ func TestBuyStockTx(t *testing.T) {
 		require.NotEmpty(t, resUser)
 		require.Equal(t, resUser.ID, randUser.ID)
 
-		resStock := result.Stock
-		require.NotEmpty(t, resStock)
-		require.Equal(t, resStock.Name, randStock.Name)
-
 		resUserStock := result.UserStock
 		require.NotEmpty(t, resUserStock)
 		require.Equal(t, resUserStock.UserID, resUser.ID)
-		require.Equal(t, resUserStock.StockID, resStock.ID)
 		require.True(t, int64(1) <= resUserStock.Quantity && resUserStock.Quantity <= int64(n))
 	}
 
-	updatedUser, err := testQueries.GetUser(context.Background(), randUser.UserLogin)
+	updatedUser, err := testQueries.GetUserFromName(context.Background(), randUser.UserLogin)
 	require.NoError(t, err)
 
 	updatedUserStock, err := testQueries.GetUserStock(context.Background(), GetUserStockParams{

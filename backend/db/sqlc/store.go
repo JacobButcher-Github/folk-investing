@@ -52,8 +52,7 @@ type BuyStockTxResult struct {
 	UserStock UserStock `json:"user_stock"`
 }
 
-// BuyStockTx performs a money subtraction from an account and adds stock to an account
-// update stock amount in user stock and update user dollar and cents using latest stock data in a single transaction
+// BuyStockTx performs a money subtraction from User and adds stock to associated UserStock
 func (store *Store) BuyStockTx(ctx context.Context, arg BuyStockTxParams) (BuyStockTxResult, error) {
 	var result BuyStockTxResult
 	err := store.execTx(ctx,
