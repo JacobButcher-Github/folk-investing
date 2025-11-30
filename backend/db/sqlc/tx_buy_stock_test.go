@@ -9,14 +9,14 @@ import (
 	"github.com/stretchr/testify/require"
 
 	//local
-	"home/osarukun/repos/tower-investing/backend/util"
+	"github.com/JacobButcher-Github/folk-investing/backend/util"
 )
 
 func TestBuyStockTx(t *testing.T) {
 	store := NewStore(testDB)
 
 	randUser := createRandomUser(t)
-	randStock, _ := createRandomStock(t)
+	randStock, randStockData := createRandomStock(t)
 	userStock, err := testQueries.CreateUserStock(context.Background(), CreateUserStockParams{
 		UserID:   randUser.ID,
 		StockID:  randStock.ID,
@@ -24,10 +24,15 @@ func TestBuyStockTx(t *testing.T) {
 	})
 
 	userStartMoney := randUser.Dollars.Int64*100 + randUser.Cents.Int64
+	stockCost := randStockData.ValueDollars*100 + randStockData.ValueCents
 
 	//run n concurrent stock buy transactions of random amount
 	n := 5
-	amount := util.RandomInt(1, 1000)
+
+	cap := int64(userStartMoney / (int64(n) * stockCost))
+
+	amount := util.RandomInt(1, cap)
+
 	errs := make(chan error)
 	results := make(chan BuyStockTxResult)
 

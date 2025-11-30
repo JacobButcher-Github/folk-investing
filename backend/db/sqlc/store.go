@@ -17,9 +17,3 @@ func NewStore(db *sql.DB) *Store {
 		Queries: New(db),
 	}
 }
-
-//selling stock
-
-//create user
-
-//multiple stock information updates
