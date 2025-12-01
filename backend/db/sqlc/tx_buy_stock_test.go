@@ -63,7 +63,7 @@ func TestBuyStockTx(t *testing.T) {
 		resUserStock := result.UserStock
 		require.NotEmpty(t, resUserStock)
 		require.Equal(t, resUserStock.UserID, resUser.ID)
-		require.True(t, int64(1) <= resUserStock.Quantity && resUserStock.Quantity <= int64(n))
+		require.True(t, int64(1) <= resUserStock.Quantity && resUserStock.Quantity <= int64(amount*n))
 	}
 
 	updatedUser, err := testQueries.GetUserFromName(context.Background(), randUser.UserLogin)
@@ -76,6 +76,6 @@ func TestBuyStockTx(t *testing.T) {
 	require.NoError(t, err)
 
 	userUpdatedMoney := updatedUser.Dollars.Int64*100 + updatedUser.Cents.Int64
-	require.Equal(t, userStartMoney-int64(n)*amount, userUpdatedMoney)
+	require.Equal(t, userStartMoney-int64(n)*amount*stockCost, userUpdatedMoney)
 	require.Equal(t, updatedUserStock.Quantity-amount*int64(n), userStock.Quantity)
 }
