@@ -1,1 +1,35 @@
 package db
+
+import (
+	"context"
+	"database/sql"
+)
+
+// CreateUserTxParams contains input parameters of crate user transaction
+type CreateUserTxParams struct {
+	CreateUserParams
+	AfterCreate func(user User) error
+}
+
+type CreateUserTxResult struct {
+	User User
+}
+
+func (store *Store) CreateUserTx(ctx context.Context, arg CreateUserTxParams) (CreateUserTxResult, error) {
+	var result CreateUserTxResult
+	err := store.execTx(ctx,
+		&sql.TxOptions{
+			Isolation: sql.LevelSerializable,
+		},
+		func(q *Queries) error {
+			var err error
+
+			result.User, err = q.CreateUser(ctx, arg.CreateUserParams)
+			if err != nil {
+				return err
+			}
+
+			return arg.AfterCreate(result.User)
+		})
+	return result, err
+}
