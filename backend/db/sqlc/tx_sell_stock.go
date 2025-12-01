@@ -5,7 +5,7 @@ import (
 	"database/sql"
 )
 
-// SellStockTxParams contains input parameteres of sell stock transaction
+// SellStockTxParams contains input parameters of sell stock transaction
 type SellStockTxParams struct {
 	UserID  int64 `json:"user_id"`
 	StockID int64 `json:"stock_id"`

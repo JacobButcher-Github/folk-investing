@@ -5,16 +5,18 @@ import (
 	"database/sql"
 )
 
-// CreateUserTxParams contains input parameters of crate user transaction
+// CreateUserTxParams contains input parameters of create user transaction
 type CreateUserTxParams struct {
 	CreateUserParams
 	AfterCreate func(user User) error
 }
 
+// CreateUserTxResult is result of the create user transaction
 type CreateUserTxResult struct {
 	User User
 }
 
+// CreateUserTx performs create user action and AfterCreate function defined in the CraeteUserTxParams
 func (store *Store) CreateUserTx(ctx context.Context, arg CreateUserTxParams) (CreateUserTxResult, error) {
 	var result CreateUserTxResult
 	err := store.execTx(ctx,
