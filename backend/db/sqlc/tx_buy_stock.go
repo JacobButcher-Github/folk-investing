@@ -66,15 +66,16 @@ func (store *Store) BuyStockTx(ctx context.Context, arg BuyStockTxParams) (BuySt
 				return err
 			}
 
-			userMoney := user.Dollars.Int64*100 + user.Cents.Int64
+			userMoney := user.Dollars*100 + user.Cents
 
 			//Update the money of the user
 			newUserMoney := userMoney - stockCost*arg.Amount
 
 			updatedUser, err := q.UpdateUser(ctx, UpdateUserParams{
-				Dollars:   sql.NullInt64{Int64: newUserMoney / 100, Valid: true},
-				Cents:     sql.NullInt64{Int64: newUserMoney % 100, Valid: true},
-				UserLogin: user.UserLogin,
+				HashedPassword: sql.NullString{String: "", Valid: false},
+				Dollars:        sql.NullInt64{Int64: newUserMoney / 100, Valid: true},
+				Cents:          sql.NullInt64{Int64: newUserMoney % 100, Valid: true},
+				UserLogin:      user.UserLogin,
 			})
 			if err != nil {
 				return err

@@ -34,8 +34,8 @@ type User struct {
 	ID             int64
 	UserLogin      string
 	HashedPassword string
-	Dollars        sql.NullInt64
-	Cents          sql.NullInt64
+	Dollars        int64
+	Cents          int64
 }
 
 type UserStock struct {

@@ -20,8 +20,8 @@ func createRandomUser(t *testing.T) User {
 	arg := CreateUserParams{
 		UserLogin:      util.RandomString(6),
 		HashedPassword: hashedPassword,
-		Dollars:        sql.NullInt64{Int64: util.RandomInt(0, 100000), Valid: true},
-		Cents:          sql.NullInt64{Int64: util.RandomInt(0, 99), Valid: true},
+		Dollars:        util.RandomInt(0, 100000),
+		Cents:          util.RandomInt(0, 99),
 	}
 
 	user, err := testQueries.CreateUser(context.Background(), arg)

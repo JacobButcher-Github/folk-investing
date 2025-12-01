@@ -20,8 +20,8 @@ VALUES
 type CreateUserParams struct {
 	UserLogin      string
 	HashedPassword string
-	Dollars        sql.NullInt64
-	Cents          sql.NullInt64
+	Dollars        int64
+	Cents          int64
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {

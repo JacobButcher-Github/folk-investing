@@ -24,7 +24,7 @@ func TestSellStockTx(t *testing.T) {
 		Quantity: util.RandomInt(5, 1000),
 	})
 
-	userStartMoney := randUser.Dollars.Int64*100 + randUser.Cents.Int64
+	userStartMoney := randUser.Dollars*100 + randUser.Cents
 	stockCost := randStockData.ValueDollars*100 + randStockData.ValueCents
 
 	n := 5
@@ -76,6 +76,6 @@ func TestSellStockTx(t *testing.T) {
 		require.Equal(t, updatedUserStock.Quantity+amount*int64(n), userStock.Quantity)
 	}
 
-	userUpdatedMoney := updatedUser.Dollars.Int64*100 + updatedUser.Cents.Int64
+	userUpdatedMoney := updatedUser.Dollars*100 + updatedUser.Cents
 	require.Equal(t, userStartMoney+int(n)*amount*stockCost, userUpdatedMoney)
 }
