@@ -17,7 +17,8 @@ type Querier interface {
 	CreateUserStock(ctx context.Context, arg CreateUserStockParams) (UserStock, error)
 	DeleteStock(ctx context.Context, name string) error
 	DeleteUserStock(ctx context.Context, arg DeleteUserStockParams) error
-	EventLabel(ctx context.Context) (interface{}, error)
+	GetEventLabel(ctx context.Context) (interface{}, error)
+	GetLockoutStatus(ctx context.Context) (int64, error)
 	GetLockoutTime(ctx context.Context) (time.Time, error)
 	GetNumberEvents(ctx context.Context) (int64, error)
 	GetSiteSettings(ctx context.Context) (SiteSetting, error)

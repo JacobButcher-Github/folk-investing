@@ -14,6 +14,7 @@ type SiteSetting struct {
 	NumberOfEventsVisible int64       `json:"number_of_events_visible"`
 	ValueSymbol           interface{} `json:"value_symbol"`
 	EventLabel            interface{} `json:"event_label"`
+	Lockout               int64       `json:"lockout"`
 	LockoutTimeStart      time.Time   `json:"lockout_time_start"`
 }
 

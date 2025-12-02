@@ -33,9 +33,17 @@ FROM
 LIMIT
   1;
 
--- name: EventLabel :one
+-- name: GetEventLabel :one
 SELECT
   event_label
+FROM
+  site_settings
+LIMIT
+  1;
+
+-- name: GetLockoutStatus :one
+SELECT
+  lockout
 FROM
   site_settings
 LIMIT

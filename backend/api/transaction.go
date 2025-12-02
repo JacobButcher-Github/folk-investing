@@ -25,6 +25,9 @@ func (server *Server) buyTransaction(ctx *gin.Context) {
 		return
 	}
 
+	if !server.validLockout(ctx) {
+		return
+	}
 	if !server.validUser(ctx, req.UserID) {
 		return
 	}
@@ -57,6 +60,9 @@ func (server *Server) sellTransaction(ctx *gin.Context) {
 		return
 	}
 
+	if !server.validLockout(ctx) {
+		return
+	}
 	if !server.validUser(ctx, req.UserID) {
 		return
 	}
@@ -82,6 +88,16 @@ func (server *Server) sellTransaction(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, sellStockResult)
 }
 
+func (server *Server) validLockout(ctx *gin.Context) bool {
+	lockout, err := server.store.GetLockoutStatus(ctx)
+	if err != nil {
+		return false
+	}
+	if lockout == 1 {
+		return false
+	}
+	return true
+}
 func (server *Server) validUser(ctx *gin.Context, userID int64) bool {
 	_, err := server.store.GetUserFromId(ctx, userID)
 	if err != nil {

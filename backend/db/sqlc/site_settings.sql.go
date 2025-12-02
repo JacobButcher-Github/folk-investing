@@ -20,7 +20,7 @@ INSERT INTO
     lockout_time_start
   )
 VALUES
-  (?, ?, ?, ?) RETURNING id, number_of_events_visible, value_symbol, event_label, lockout_time_start
+  (?, ?, ?, ?) RETURNING id, number_of_events_visible, value_symbol, event_label, lockout, lockout_time_start
 `
 
 type CreateSiteSettingsParams struct {
@@ -43,12 +43,13 @@ func (q *Queries) CreateSiteSettings(ctx context.Context, arg CreateSiteSettings
 		&i.NumberOfEventsVisible,
 		&i.ValueSymbol,
 		&i.EventLabel,
+		&i.Lockout,
 		&i.LockoutTimeStart,
 	)
 	return i, err
 }
 
-const eventLabel = `-- name: EventLabel :one
+const getEventLabel = `-- name: GetEventLabel :one
 SELECT
   event_label
 FROM
@@ -57,11 +58,27 @@ LIMIT
   1
 `
 
-func (q *Queries) EventLabel(ctx context.Context) (interface{}, error) {
-	row := q.db.QueryRowContext(ctx, eventLabel)
+func (q *Queries) GetEventLabel(ctx context.Context) (interface{}, error) {
+	row := q.db.QueryRowContext(ctx, getEventLabel)
 	var event_label interface{}
 	err := row.Scan(&event_label)
 	return event_label, err
+}
+
+const getLockoutStatus = `-- name: GetLockoutStatus :one
+SELECT
+  lockout
+FROM
+  site_settings
+LIMIT
+  1
+`
+
+func (q *Queries) GetLockoutStatus(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getLockoutStatus)
+	var lockout int64
+	err := row.Scan(&lockout)
+	return lockout, err
 }
 
 const getLockoutTime = `-- name: GetLockoutTime :one
@@ -98,7 +115,7 @@ func (q *Queries) GetNumberEvents(ctx context.Context) (int64, error) {
 
 const getSiteSettings = `-- name: GetSiteSettings :one
 SELECT
-  id, number_of_events_visible, value_symbol, event_label, lockout_time_start
+  id, number_of_events_visible, value_symbol, event_label, lockout, lockout_time_start
 FROM
   site_settings
 LIMIT
@@ -113,6 +130,7 @@ func (q *Queries) GetSiteSettings(ctx context.Context) (SiteSetting, error) {
 		&i.NumberOfEventsVisible,
 		&i.ValueSymbol,
 		&i.EventLabel,
+		&i.Lockout,
 		&i.LockoutTimeStart,
 	)
 	return i, err
@@ -148,7 +166,7 @@ SET
     lockout_time_start
   )
 WHERE
-  id = 0 RETURNING id, number_of_events_visible, value_symbol, event_label, lockout_time_start
+  id = 0 RETURNING id, number_of_events_visible, value_symbol, event_label, lockout, lockout_time_start
 `
 
 type UpdateSettingsParams struct {
@@ -171,6 +189,7 @@ func (q *Queries) UpdateSettings(ctx context.Context, arg UpdateSettingsParams) 
 		&i.NumberOfEventsVisible,
 		&i.ValueSymbol,
 		&i.EventLabel,
+		&i.Lockout,
 		&i.LockoutTimeStart,
 	)
 	return i, err
