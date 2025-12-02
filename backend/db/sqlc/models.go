@@ -6,14 +6,15 @@ package db
 
 import (
 	"database/sql"
+	"time"
 )
 
 type SiteSetting struct {
 	ID                    int64
-	NumberOfEventsVisible sql.NullInt64
+	NumberOfEventsVisible int64
 	ValueSymbol           interface{}
 	EventLabel            interface{}
-	LockoutTimeStart      sql.NullTime
+	LockoutTimeStart      time.Time
 }
 
 type Stock struct {

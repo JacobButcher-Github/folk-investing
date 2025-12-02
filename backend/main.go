@@ -5,10 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	//import
+	//go package
 	"github.com/gin-gonic/gin"
-	//local
-	// "github.com/JacobButcher-Github/folk-investing/"
 )
 
 func main() {

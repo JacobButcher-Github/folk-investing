@@ -1,4 +1,4 @@
--- name: CreateSiteSettings :exec
+-- name: CreateSiteSettings :one
 INSERT INTO
   site_settings (
     number_of_events_visible,
@@ -7,7 +7,7 @@ INSERT INTO
     lockout_time_start
   )
 VALUES
-  (?, ?, ?, ?);
+  (?, ?, ?, ?) RETURNING *;
 
 -- name: GetNumberEvents :one
 SELECT

@@ -8,9 +8,10 @@ package db
 import (
 	"context"
 	"database/sql"
+	"time"
 )
 
-const createSiteSettings = `-- name: CreateSiteSettings :exec
+const createSiteSettings = `-- name: CreateSiteSettings :one
 INSERT INTO
   site_settings (
     number_of_events_visible,
@@ -19,24 +20,32 @@ INSERT INTO
     lockout_time_start
   )
 VALUES
-  (?, ?, ?, ?)
+  (?, ?, ?, ?) RETURNING id, number_of_events_visible, value_symbol, event_label, lockout_time_start
 `
 
 type CreateSiteSettingsParams struct {
-	NumberOfEventsVisible sql.NullInt64
+	NumberOfEventsVisible int64
 	ValueSymbol           interface{}
 	EventLabel            interface{}
-	LockoutTimeStart      sql.NullTime
+	LockoutTimeStart      time.Time
 }
 
-func (q *Queries) CreateSiteSettings(ctx context.Context, arg CreateSiteSettingsParams) error {
-	_, err := q.db.ExecContext(ctx, createSiteSettings,
+func (q *Queries) CreateSiteSettings(ctx context.Context, arg CreateSiteSettingsParams) (SiteSetting, error) {
+	row := q.db.QueryRowContext(ctx, createSiteSettings,
 		arg.NumberOfEventsVisible,
 		arg.ValueSymbol,
 		arg.EventLabel,
 		arg.LockoutTimeStart,
 	)
-	return err
+	var i SiteSetting
+	err := row.Scan(
+		&i.ID,
+		&i.NumberOfEventsVisible,
+		&i.ValueSymbol,
+		&i.EventLabel,
+		&i.LockoutTimeStart,
+	)
+	return i, err
 }
 
 const eventLabel = `-- name: EventLabel :one
@@ -64,9 +73,9 @@ LIMIT
   1
 `
 
-func (q *Queries) GetLockoutTime(ctx context.Context) (sql.NullTime, error) {
+func (q *Queries) GetLockoutTime(ctx context.Context) (time.Time, error) {
 	row := q.db.QueryRowContext(ctx, getLockoutTime)
-	var lockout_time_start sql.NullTime
+	var lockout_time_start time.Time
 	err := row.Scan(&lockout_time_start)
 	return lockout_time_start, err
 }
@@ -80,9 +89,9 @@ LIMIT
   1
 `
 
-func (q *Queries) GetNumberEvents(ctx context.Context) (sql.NullInt64, error) {
+func (q *Queries) GetNumberEvents(ctx context.Context) (int64, error) {
 	row := q.db.QueryRowContext(ctx, getNumberEvents)
-	var number_of_events_visible sql.NullInt64
+	var number_of_events_visible int64
 	err := row.Scan(&number_of_events_visible)
 	return number_of_events_visible, err
 }
