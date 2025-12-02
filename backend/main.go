@@ -2,24 +2,33 @@ package main
 
 import (
 	//stl
+	"database/sql"
 	"log"
-	"net/http"
 
 	//go package
-	"github.com/gin-gonic/gin"
+
+	//local
+	"github.com/JacobButcher-Github/folk-investing/backend/api"
+	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
+)
+
+const (
+	dbDriver      = "sqlite"
+	dbSource      = ""
+	serverAddress = "0.0.0.0:8080"
 )
 
 func main() {
-	r := gin.Default()
+	conn, err := sql.Open(dbDriver, dbSource)
+	if err != nil {
+		log.Fatal("cannot connec to DB: ", err)
+	}
 
-	r.GET("/ping", func(c *gin.Context) {
-		// Return JSON response
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
+	store := db.NewStore(conn)
+	server := api.NewServer(store)
 
-	if err := r.Run(); err != nil {
-		log.Fatalf("failed to run server: %v", err)
+	err = server.Start(serverAddress)
+	if err != nil {
+		log.Fatal("cannot start server: ", err)
 	}
 }
