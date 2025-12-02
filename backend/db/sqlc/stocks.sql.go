@@ -72,24 +72,6 @@ func (q *Queries) DeleteStock(ctx context.Context, name string) error {
 	return err
 }
 
-const getStock = `-- name: GetStock :one
-SELECT
-  id, name, image_path
-FROM
-  stocks
-WHERE
-  name = ?
-LIMIT
-  1
-`
-
-func (q *Queries) GetStock(ctx context.Context, name string) (Stock, error) {
-	row := q.db.QueryRowContext(ctx, getStock, name)
-	var i Stock
-	err := row.Scan(&i.ID, &i.Name, &i.ImagePath)
-	return i, err
-}
-
 const getStockData = `-- name: GetStockData :one
 SELECT
   id, stock_id, event_label, value_dollars, value_cents
@@ -118,6 +100,42 @@ func (q *Queries) GetStockData(ctx context.Context, arg GetStockDataParams) (Sto
 		&i.ValueDollars,
 		&i.ValueCents,
 	)
+	return i, err
+}
+
+const getStockFromId = `-- name: GetStockFromId :one
+SELECT
+  id, name, image_path
+FROM
+  stocks
+WHERE
+  id = ?
+LIMIT
+  1
+`
+
+func (q *Queries) GetStockFromId(ctx context.Context, id int64) (Stock, error) {
+	row := q.db.QueryRowContext(ctx, getStockFromId, id)
+	var i Stock
+	err := row.Scan(&i.ID, &i.Name, &i.ImagePath)
+	return i, err
+}
+
+const getStockFromName = `-- name: GetStockFromName :one
+SELECT
+  id, name, image_path
+FROM
+  stocks
+WHERE
+  name = ?
+LIMIT
+  1
+`
+
+func (q *Queries) GetStockFromName(ctx context.Context, name string) (Stock, error) {
+	row := q.db.QueryRowContext(ctx, getStockFromName, name)
+	var i Stock
+	err := row.Scan(&i.ID, &i.Name, &i.ImagePath)
 	return i, err
 }
 

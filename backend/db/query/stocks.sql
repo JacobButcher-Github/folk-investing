@@ -4,7 +4,17 @@ INSERT INTO
 VALUES
   (?, ?) RETURNING *;
 
--- name: GetStock :one
+-- name: GetStockFromId :one
+SELECT
+  *
+FROM
+  stocks
+WHERE
+  id = ?
+LIMIT
+  1;
+
+-- name: GetStockFromName :one
 SELECT
   *
 FROM
