@@ -17,9 +17,9 @@ VALUES
 `
 
 type CreateUserStockParams struct {
-	UserID   int64
-	StockID  int64
-	Quantity int64
+	UserID   int64 `json:"user_id"`
+	StockID  int64 `json:"stock_id"`
+	Quantity int64 `json:"quantity"`
 }
 
 func (q *Queries) CreateUserStock(ctx context.Context, arg CreateUserStockParams) (UserStock, error) {
@@ -38,8 +38,8 @@ WHERE
 `
 
 type DeleteUserStockParams struct {
-	UserID  int64
-	StockID int64
+	UserID  int64 `json:"user_id"`
+	StockID int64 `json:"stock_id"`
 }
 
 func (q *Queries) DeleteUserStock(ctx context.Context, arg DeleteUserStockParams) error {
@@ -60,8 +60,8 @@ LIMIT
 `
 
 type GetUserStockParams struct {
-	UserID  int64
-	StockID int64
+	UserID  int64 `json:"user_id"`
+	StockID int64 `json:"stock_id"`
 }
 
 func (q *Queries) GetUserStock(ctx context.Context, arg GetUserStockParams) (UserStock, error) {
@@ -81,9 +81,9 @@ WHERE
 `
 
 type UpdateUserStockParams struct {
-	Quantity int64
-	UserID   int64
-	StockID  int64
+	Quantity int64 `json:"quantity"`
+	UserID   int64 `json:"user_id"`
+	StockID  int64 `json:"stock_id"`
 }
 
 func (q *Queries) UpdateUserStock(ctx context.Context, arg UpdateUserStockParams) (UserStock, error) {

@@ -18,10 +18,10 @@ VALUES
 `
 
 type CreateUserParams struct {
-	UserLogin      string
-	HashedPassword string
-	Dollars        int64
-	Cents          int64
+	UserLogin      string `json:"user_login"`
+	HashedPassword string `json:"hashed_password"`
+	Dollars        int64  `json:"dollars"`
+	Cents          int64  `json:"cents"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -101,10 +101,10 @@ WHERE
 `
 
 type UpdateUserParams struct {
-	HashedPassword sql.NullString
-	Dollars        sql.NullInt64
-	Cents          sql.NullInt64
-	UserLogin      string
+	HashedPassword sql.NullString `json:"hashed_password"`
+	Dollars        sql.NullInt64  `json:"dollars"`
+	Cents          sql.NullInt64  `json:"cents"`
+	UserLogin      string         `json:"user_login"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {

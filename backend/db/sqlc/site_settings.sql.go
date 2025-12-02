@@ -24,10 +24,10 @@ VALUES
 `
 
 type CreateSiteSettingsParams struct {
-	NumberOfEventsVisible int64
-	ValueSymbol           interface{}
-	EventLabel            interface{}
-	LockoutTimeStart      time.Time
+	NumberOfEventsVisible int64       `json:"number_of_events_visible"`
+	ValueSymbol           interface{} `json:"value_symbol"`
+	EventLabel            interface{} `json:"event_label"`
+	LockoutTimeStart      time.Time   `json:"lockout_time_start"`
 }
 
 func (q *Queries) CreateSiteSettings(ctx context.Context, arg CreateSiteSettingsParams) (SiteSetting, error) {
@@ -152,10 +152,10 @@ WHERE
 `
 
 type UpdateSettingsParams struct {
-	NumberOfEventsVisible sql.NullInt64
-	ValueSymbol           interface{}
-	EventLabel            interface{}
-	LockoutTimeStart      sql.NullTime
+	NumberOfEventsVisible sql.NullInt64 `json:"number_of_events_visible"`
+	ValueSymbol           interface{}   `json:"value_symbol"`
+	EventLabel            interface{}   `json:"event_label"`
+	LockoutTimeStart      sql.NullTime  `json:"lockout_time_start"`
 }
 
 func (q *Queries) UpdateSettings(ctx context.Context, arg UpdateSettingsParams) (SiteSetting, error) {

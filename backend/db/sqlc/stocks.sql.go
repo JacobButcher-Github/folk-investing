@@ -18,8 +18,8 @@ VALUES
 `
 
 type CreateStockParams struct {
-	Name      string
-	ImagePath sql.NullString
+	Name      string         `json:"name"`
+	ImagePath sql.NullString `json:"image_path"`
 }
 
 func (q *Queries) CreateStock(ctx context.Context, arg CreateStockParams) (Stock, error) {
@@ -37,10 +37,10 @@ VALUES
 `
 
 type CreateStockDataParams struct {
-	StockID      int64
-	EventLabel   string
-	ValueDollars int64
-	ValueCents   int64
+	StockID      int64  `json:"stock_id"`
+	EventLabel   string `json:"event_label"`
+	ValueDollars int64  `json:"value_dollars"`
+	ValueCents   int64  `json:"value_cents"`
 }
 
 func (q *Queries) CreateStockData(ctx context.Context, arg CreateStockDataParams) (StockDatum, error) {
@@ -104,8 +104,8 @@ LIMIT
 `
 
 type GetStockDataParams struct {
-	StockID int64
-	Limit   int64
+	StockID int64 `json:"stock_id"`
+	Limit   int64 `json:"limit"`
 }
 
 func (q *Queries) GetStockData(ctx context.Context, arg GetStockDataParams) (StockDatum, error) {
@@ -140,9 +140,9 @@ WHERE
 `
 
 type PruneStockDataParams struct {
-	StockID   int64
-	StockID_2 int64
-	Limit     int64
+	StockID   int64 `json:"stock_id"`
+	StockID_2 int64 `json:"stock_id_2"`
+	Limit     int64 `json:"limit"`
 }
 
 func (q *Queries) PruneStockData(ctx context.Context, arg PruneStockDataParams) error {
@@ -160,9 +160,9 @@ WHERE
 `
 
 type UpdateStockParams struct {
-	NewName   sql.NullString
-	ImagePath sql.NullString
-	Name      string
+	NewName   sql.NullString `json:"new_name"`
+	ImagePath sql.NullString `json:"image_path"`
+	Name      string         `json:"name"`
 }
 
 func (q *Queries) UpdateStock(ctx context.Context, arg UpdateStockParams) (Stock, error) {
@@ -185,12 +185,12 @@ WHERE
 `
 
 type UpdateStockDataParams struct {
-	NewID        sql.NullInt64
-	NewLabel     sql.NullString
-	ValueDollars sql.NullInt64
-	ValueCents   sql.NullInt64
-	StockID      int64
-	EventLabel   string
+	NewID        sql.NullInt64  `json:"new_id"`
+	NewLabel     sql.NullString `json:"new_label"`
+	ValueDollars sql.NullInt64  `json:"value_dollars"`
+	ValueCents   sql.NullInt64  `json:"value_cents"`
+	StockID      int64          `json:"stock_id"`
+	EventLabel   string         `json:"event_label"`
 }
 
 func (q *Queries) UpdateStockData(ctx context.Context, arg UpdateStockDataParams) (StockDatum, error) {

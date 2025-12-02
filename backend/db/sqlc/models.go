@@ -10,37 +10,37 @@ import (
 )
 
 type SiteSetting struct {
-	ID                    int64
-	NumberOfEventsVisible int64
-	ValueSymbol           interface{}
-	EventLabel            interface{}
-	LockoutTimeStart      time.Time
+	ID                    int64       `json:"id"`
+	NumberOfEventsVisible int64       `json:"number_of_events_visible"`
+	ValueSymbol           interface{} `json:"value_symbol"`
+	EventLabel            interface{} `json:"event_label"`
+	LockoutTimeStart      time.Time   `json:"lockout_time_start"`
 }
 
 type Stock struct {
-	ID        int64
-	Name      string
-	ImagePath sql.NullString
+	ID        int64          `json:"id"`
+	Name      string         `json:"name"`
+	ImagePath sql.NullString `json:"image_path"`
 }
 
 type StockDatum struct {
-	ID           int64
-	StockID      int64
-	EventLabel   string
-	ValueDollars int64
-	ValueCents   int64
+	ID           int64  `json:"id"`
+	StockID      int64  `json:"stock_id"`
+	EventLabel   string `json:"event_label"`
+	ValueDollars int64  `json:"value_dollars"`
+	ValueCents   int64  `json:"value_cents"`
 }
 
 type User struct {
-	ID             int64
-	UserLogin      string
-	HashedPassword string
-	Dollars        int64
-	Cents          int64
+	ID             int64  `json:"id"`
+	UserLogin      string `json:"user_login"`
+	HashedPassword string `json:"hashed_password"`
+	Dollars        int64  `json:"dollars"`
+	Cents          int64  `json:"cents"`
 }
 
 type UserStock struct {
-	UserID   int64
-	StockID  int64
-	Quantity int64
+	UserID   int64 `json:"user_id"`
+	StockID  int64 `json:"stock_id"`
+	Quantity int64 `json:"quantity"`
 }
