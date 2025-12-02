@@ -9,6 +9,14 @@ INSERT INTO
 VALUES
   (?, ?, ?, ?) RETURNING *;
 
+-- name: GetSiteSettings :one
+SELECT
+  *
+FROM
+  site_settings
+LIMIT
+  1;
+
 -- name: GetNumberEvents :one
 SELECT
   number_of_events_visible

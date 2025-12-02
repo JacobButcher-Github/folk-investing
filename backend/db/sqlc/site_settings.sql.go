@@ -96,6 +96,28 @@ func (q *Queries) GetNumberEvents(ctx context.Context) (int64, error) {
 	return number_of_events_visible, err
 }
 
+const getSiteSettings = `-- name: GetSiteSettings :one
+SELECT
+  id, number_of_events_visible, value_symbol, event_label, lockout_time_start
+FROM
+  site_settings
+LIMIT
+  1
+`
+
+func (q *Queries) GetSiteSettings(ctx context.Context) (SiteSetting, error) {
+	row := q.db.QueryRowContext(ctx, getSiteSettings)
+	var i SiteSetting
+	err := row.Scan(
+		&i.ID,
+		&i.NumberOfEventsVisible,
+		&i.ValueSymbol,
+		&i.EventLabel,
+		&i.LockoutTimeStart,
+	)
+	return i, err
+}
+
 const getValueSymbol = `-- name: GetValueSymbol :one
 SELECT
   value_symbol
