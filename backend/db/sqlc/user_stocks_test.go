@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	//local
-	"github.com/JacobButcher-Github/folk-investing/backend/util"
+	"home/osarukun/repos/tower-investing/backend/util"
 )
 
 func createRandomUserStock(t *testing.T) UserStock {
@@ -52,7 +52,7 @@ func TestUpdateUserStock(t *testing.T) {
 	userStock := createRandomUserStock(t)
 	var newQuantity int64
 	for {
-		newQuantity = util.randomInt(1, 99)
+		newQuantity = util.RandomInt(1, 99)
 		if newQuantity != userStock.Quantity {
 			break
 		}

@@ -136,6 +136,6 @@ func (server *Server) stocksData(ctx *gin.Context) {
 	}
 
 	var rsp getStocksDataResponse
-	rsp.StockData = res.NewStockData
+	rsp.StockData = res
 	ctx.JSON(http.StatusOK, rsp)
 }

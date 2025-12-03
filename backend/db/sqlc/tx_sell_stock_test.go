@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	//local
-	"github.com/JacobButcher-Github/folk-investing/backend/util"
+	"home/osarukun/repos/tower-investing/backend/util"
 )
 
 func TestSellStockTx(t *testing.T) {
@@ -59,7 +59,7 @@ func TestSellStockTx(t *testing.T) {
 		resUserStock := result.UserStock
 		require.NotEmpty(t, resUserStock)
 		require.Equal(t, resUserStock.UserID, resUser.ID)
-		require.True(t, int64(0) <= resUserStock.Quantity && resUserStock.Quantity <= int64(amount*n))
+		require.True(t, int64(0) <= resUserStock.Quantity && resUserStock.Quantity <= int64(amount*int64(n)))
 	}
 
 	updatedUser, err := testQueries.GetUserFromId(context.Background(), randUser.ID)
@@ -69,7 +69,7 @@ func TestSellStockTx(t *testing.T) {
 		UserID:  randUser.ID,
 		StockID: randStock.ID,
 	})
-	if n*amount == userStock.Quantity {
+	if int64(n)*amount == userStock.Quantity {
 		require.Equal(t, err, sql.ErrNoRows)
 	} else {
 		require.NoError(t, err)
@@ -77,5 +77,5 @@ func TestSellStockTx(t *testing.T) {
 	}
 
 	userUpdatedMoney := updatedUser.Dollars*100 + updatedUser.Cents
-	require.Equal(t, userStartMoney+int(n)*amount*stockCost, userUpdatedMoney)
+	require.Equal(t, userStartMoney+int64(n)*amount*stockCost, userUpdatedMoney)
 }

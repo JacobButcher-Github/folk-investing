@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	//local
-	"github.com/JacobButcher-Github/folk-investing/backend/util"
+	"home/osarukun/repos/tower-investing/backend/util"
 )
 
 func createRandomStock(t *testing.T) (Stock, StockDatum) {
@@ -54,7 +54,7 @@ func TestCreateStock(t *testing.T) {
 
 func TestGetStock(t *testing.T) {
 	stock1, stockData1 := createRandomStock(t)
-	stock2, err := testQueries.GetStock(context.Background(), stock1.Name)
+	stock2, err := testQueries.GetStockFromName(context.Background(), stock1.Name)
 	require.NoError(t, err)
 	require.NotEmpty(t, stock2)
 	stockData2, err := testQueries.GetStockData(context.Background(), GetStockDataParams{StockID: stock1.ID, Limit: 1})
@@ -270,7 +270,7 @@ func TestDeleteStock(t *testing.T) {
 	stock, _ := createRandomStock(t)
 	err := testQueries.DeleteStock(context.Background(), stock.Name)
 	require.NoError(t, err)
-	deletedStock, err := testQueries.GetStock(context.Background(), stock.Name)
+	deletedStock, err := testQueries.GetStockFromName(context.Background(), stock.Name)
 	require.NoError(t, err)
 	require.Empty(t, deletedStock)
 	deletedStockData, err := testQueries.GetStockData(context.Background(), GetStockDataParams{

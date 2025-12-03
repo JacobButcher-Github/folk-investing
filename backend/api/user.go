@@ -3,16 +3,18 @@ package api
 import (
 	//stl
 	"database/sql"
+	"fmt"
 	"home/osarukun/repos/tower-investing/backend/token"
+	"home/osarukun/repos/tower-investing/backend/util"
 	"net/http"
 	"time"
 
 	//go package
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 
 	//local
-	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
-	"github.com/JacobButcher-Github/folk-investing/backend/util"
+	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
 )
 
 type createUserRequest struct {
@@ -98,8 +100,12 @@ type loginUserRequest struct {
 }
 
 type loginUserResponse struct {
-	AccessToken string       `json:"access_token"`
-	User        userResponse `json:"user"`
+	SessionID             uuid.UUID    `json:"session_id"`
+	AccessToken           string       `json:"access_token"`
+	AccessTokenExpiresAt  time.Time    `json:"access_token_expires_at"`
+	RefreshToken          string       `json:"refresh_token"`
+	RefreshTokenExpiresAt time.Time    `json:"refresh_token_expires_at"`
+	User                  userResponse `json:"user"`
 }
 
 func (server *Server) loginUser(ctx *gin.Context) {
@@ -109,7 +115,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		return
 	}
 
-	user, err := server.store.GetUser(ctx, req.UserLogin)
+	user, err := server.store.GetUserFromName(ctx, req.UserLogin)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -125,20 +131,66 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		return
 	}
 
-	duration := 15 * time.Minute
-	accessToken, err := server.tokenMaker.CreateToken(
+	accessDuration := 15 * time.Minute
+	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
 		user.ID,
 		user.UserLogin,
-		duration,
+		accessDuration,
 	)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
+	refreshDuration := 24 * time.Hour
+
+	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
+		user.ID,
+		user.UserLogin,
+		refreshDuration,
+	)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
+		ID:           refreshPayload.ID,
+		UserLogin:    user.UserLogin,
+		RefreshToken: refreshToken,
+		UserAgent:    "", //TODO: fill this out
+		ClientIp:     "",
+		IsBlocked:    0,
+		ExpiresAt:    refreshPayload.ExpiredAt,
+	})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	uuid, err := toUUID(session.ID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
 	rsp := loginUserResponse{
-		AccessToken: accessToken,
-		User:        newUserResponse(user),
+		SessionID:             uuid,
+		AccessToken:           accessToken,
+		AccessTokenExpiresAt:  accessPayload.ExpiredAt,
+		RefreshToken:          refreshToken,
+		RefreshTokenExpiresAt: refreshPayload.ExpiredAt,
+		User:                  newUserResponse(user),
 	}
 	ctx.JSON(http.StatusOK, rsp)
+}
+
+func toUUID(v interface{}) (uuid.UUID, error) {
+	switch val := v.(type) {
+	case string:
+		return uuid.Parse(val)
+	case []byte:
+		return uuid.ParseBytes(val)
+	default:
+		return uuid.Nil, fmt.Errorf("unsupported UUID type %T", v)
+	}
 }

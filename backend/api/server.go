@@ -8,8 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 
 	//local
-	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
-	"github.com/JacobButcher-Github/folk-investing/backend/token"
+	"home/osarukun/repos/tower-investing/backend/token"
+
+	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
 )
 
 type Server struct {

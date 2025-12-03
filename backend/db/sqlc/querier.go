@@ -10,6 +10,7 @@ import (
 )
 
 type Querier interface {
+	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateSiteSettings(ctx context.Context, arg CreateSiteSettingsParams) (SiteSetting, error)
 	CreateStock(ctx context.Context, arg CreateStockParams) (Stock, error)
 	CreateStockData(ctx context.Context, arg CreateStockDataParams) (StockDatum, error)
@@ -22,6 +23,7 @@ type Querier interface {
 	GetLockoutStatus(ctx context.Context) (int64, error)
 	GetLockoutTime(ctx context.Context) (time.Time, error)
 	GetNumberEvents(ctx context.Context) (int64, error)
+	GetSession(ctx context.Context, userLogin string) (Session, error)
 	GetSiteSettings(ctx context.Context) (SiteSetting, error)
 	GetStockData(ctx context.Context, arg GetStockDataParams) (StockDatum, error)
 	GetStockFromId(ctx context.Context, id int64) (Stock, error)

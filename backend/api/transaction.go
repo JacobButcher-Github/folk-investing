@@ -11,7 +11,7 @@ import (
 	//local
 	"home/osarukun/repos/tower-investing/backend/token"
 
-	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
+	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
 )
 
 type transactionRequest struct {
@@ -162,7 +162,7 @@ func (server *Server) validUserStockSell(ctx *gin.Context, userID int64, stockID
 	if err != nil {
 		return false
 	}
-	if userStock.amount < amount {
+	if userStock.Quantity < amount {
 		return false
 	}
 	return true

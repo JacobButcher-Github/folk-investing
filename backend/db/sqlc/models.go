@@ -9,6 +9,17 @@ import (
 	"time"
 )
 
+type Session struct {
+	ID           interface{} `json:"id"`
+	UserLogin    string      `json:"user_login"`
+	RefreshToken string      `json:"refresh_token"`
+	UserAgent    string      `json:"user_agent"`
+	ClientIp     string      `json:"client_ip"`
+	IsBlocked    int64       `json:"is_blocked"`
+	ExpiresAt    time.Time   `json:"expires_at"`
+	CreatedAt    interface{} `json:"created_at"`
+}
+
 type SiteSetting struct {
 	ID                    int64       `json:"id"`
 	NumberOfEventsVisible int64       `json:"number_of_events_visible"`

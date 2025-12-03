@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	//local
-	"github.com/JacobButcher-Github/folk-investing/backend/util"
+	"home/osarukun/repos/tower-investing/backend/util"
 )
 
 func createRandomUser(t *testing.T) User {

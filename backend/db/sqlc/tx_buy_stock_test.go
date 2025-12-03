@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	//local
-	"github.com/JacobButcher-Github/folk-investing/backend/util"
+	"home/osarukun/repos/tower-investing/backend/util"
 )
 
 func TestBuyStockTx(t *testing.T) {
@@ -63,7 +63,7 @@ func TestBuyStockTx(t *testing.T) {
 		resUserStock := result.UserStock
 		require.NotEmpty(t, resUserStock)
 		require.Equal(t, resUserStock.UserID, resUser.ID)
-		require.True(t, int64(1) <= resUserStock.Quantity && resUserStock.Quantity <= int64(amount*n))
+		require.True(t, int64(1) <= resUserStock.Quantity && resUserStock.Quantity <= int64(amount*int64(n)))
 	}
 
 	updatedUser, err := testQueries.GetUserFromName(context.Background(), randUser.UserLogin)
