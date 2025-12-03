@@ -42,12 +42,12 @@ func (server *Server) setupRouter() {
 	router.POST("users/login", server.loginUser)
 	router.POST("/tokens/renew_access", server.renewAccessToken)
 
-	router.POST("stocks/new_stock", server.createStock)
-	router.POST("stocks/new_stock_data", server.newStockData)
 	router.GET("stocks/stocks_data", server.stocksData)
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 	authRoutes.GET("/users/:user_login", server.getUser)
+	authRoutes.POST("stocks/new_stock", server.createStock)
+	authRoutes.POST("stocks/new_stock_data", server.newStockData)
 	authRoutes.POST("/transaction/buy_stock", server.buyTransaction)
 	authRoutes.POST("/transaction/sell_stock", server.sellTransaction)
 

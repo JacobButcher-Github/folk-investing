@@ -3,7 +3,10 @@ package api
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
+	"home/osarukun/repos/tower-investing/backend/token"
+	"home/osarukun/repos/tower-investing/backend/util"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -36,7 +39,11 @@ func (server *Server) createStock(ctx *gin.Context) {
 		req.ImagePath = "default/image/path"
 	}
 
-	//TODO: auth needed here. If authpayload roal != admin or something
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if authPayload.Role != util.AdminRole {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(fmt.Errorf("not an admin account")))
+		return
+	}
 
 	arg := db.CreateStockParams{
 		Name:      req.StockName,
@@ -75,7 +82,11 @@ func (server *Server) newStockData(ctx *gin.Context) {
 		return
 	}
 
-	//TODO: auth needed here. If authpayload roal != admin or something
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if authPayload.Role != util.AdminRole {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(fmt.Errorf("not an admin account")))
+		return
+	}
 
 	var newBatchStockData []db.CreateStockDataParams
 	for i := range req.StockIDs {

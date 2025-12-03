@@ -4,7 +4,6 @@ import (
 	//stl
 	"database/sql"
 	"fmt"
-	"home/osarukun/repos/tower-investing/backend/token"
 	"home/osarukun/repos/tower-investing/backend/util"
 	"net/http"
 	"time"
@@ -79,9 +78,7 @@ func (server *Server) getUser(ctx *gin.Context) {
 		return
 	}
 
-	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
-
-	user, err := server.store.GetUserFromName(ctx, authPayload.UserLogin)
+	user, err := server.store.GetUserFromName(ctx, req.UserLogin)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -137,6 +134,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
 		user.ID,
 		user.UserLogin,
+		user.Role,
 		accessDuration,
 	)
 	if err != nil {
@@ -149,6 +147,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
 		user.ID,
 		user.UserLogin,
+		user.Role,
 		refreshDuration,
 	)
 	if err != nil {

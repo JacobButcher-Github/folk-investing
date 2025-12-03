@@ -14,7 +14,7 @@ const createUser = `-- name: CreateUser :one
 INSERT INTO
   users (user_login, hashed_password, dollars, cents)
 VALUES
-  (?, ?, ?, ?) RETURNING id, user_login, hashed_password, dollars, cents
+  (?, ?, ?, ?) RETURNING id, role, user_login, hashed_password, dollars, cents
 `
 
 type CreateUserParams struct {
@@ -34,6 +34,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Role,
 		&i.UserLogin,
 		&i.HashedPassword,
 		&i.Dollars,
@@ -44,7 +45,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 
 const getUserFromId = `-- name: GetUserFromId :one
 SELECT
-  id, user_login, hashed_password, dollars, cents
+  id, role, user_login, hashed_password, dollars, cents
 FROM
   users
 WHERE
@@ -58,6 +59,7 @@ func (q *Queries) GetUserFromId(ctx context.Context, id int64) (User, error) {
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Role,
 		&i.UserLogin,
 		&i.HashedPassword,
 		&i.Dollars,
@@ -68,7 +70,7 @@ func (q *Queries) GetUserFromId(ctx context.Context, id int64) (User, error) {
 
 const getUserFromName = `-- name: GetUserFromName :one
 SELECT
-  id, user_login, hashed_password, dollars, cents
+  id, role, user_login, hashed_password, dollars, cents
 FROM
   users
 WHERE
@@ -82,6 +84,7 @@ func (q *Queries) GetUserFromName(ctx context.Context, userLogin string) (User, 
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Role,
 		&i.UserLogin,
 		&i.HashedPassword,
 		&i.Dollars,
@@ -97,7 +100,7 @@ SET
   dollars = COALESCE(?2, dollars),
   cents = COALESCE(?3, cents)
 WHERE
-  user_login = ?4 RETURNING id, user_login, hashed_password, dollars, cents
+  user_login = ?4 RETURNING id, role, user_login, hashed_password, dollars, cents
 `
 
 type UpdateUserParams struct {
@@ -117,6 +120,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Role,
 		&i.UserLogin,
 		&i.HashedPassword,
 		&i.Dollars,
