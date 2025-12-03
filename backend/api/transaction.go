@@ -9,6 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	//local
+	"home/osarukun/repos/tower-investing/backend/token"
+
 	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
 )
 
@@ -25,6 +27,8 @@ func (server *Server) buyTransaction(ctx *gin.Context) {
 		return
 	}
 
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+
 	if !server.validLockout(ctx) {
 		return
 	}
@@ -39,7 +43,7 @@ func (server *Server) buyTransaction(ctx *gin.Context) {
 	}
 
 	arg := db.BuyStockTxParams{
-		UserID:  req.UserID,
+		UserID:  authPayload.UserID,
 		StockID: req.StockID,
 		Amount:  req.Amount,
 	}
@@ -60,6 +64,8 @@ func (server *Server) sellTransaction(ctx *gin.Context) {
 		return
 	}
 
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+
 	if !server.validLockout(ctx) {
 		return
 	}
@@ -74,7 +80,7 @@ func (server *Server) sellTransaction(ctx *gin.Context) {
 	}
 
 	arg := db.SellStockTxParams{
-		UserID:  req.UserID,
+		UserID:  authPayload.UserID,
 		StockID: req.StockID,
 		Amount:  req.Amount,
 	}
