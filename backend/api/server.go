@@ -37,11 +37,15 @@ func (server *Server) setupRouter() {
 
 	router := gin.Default()
 
-	router.POST("/users", server.createUser)
+	router.POST("/users/register", server.createUser)
 	router.POST("users/login", server.loginUser)
-	router.GET("/users/:user_login", server.getUser)
+
+	router.POST("stocks/new_stock", server.newStock)
+	router.POST("stocks/new_stock_data", server.newStockData)
+	router.GET("stocks/stock_data", server.stockData)
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
+	authRoutes.GET("/users/:user_login", server.getUser)
 	authRoutes.POST("/transaction/buy_stock", server.buyTransaction)
 	authRoutes.POST("/transaction/sell_stock", server.sellTransaction)
 

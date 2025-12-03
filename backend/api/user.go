@@ -3,6 +3,7 @@ package api
 import (
 	//stl
 	"database/sql"
+	"home/osarukun/repos/tower-investing/backend/token"
 	"net/http"
 	"time"
 
@@ -74,7 +75,9 @@ func (server *Server) getUser(ctx *gin.Context) {
 		return
 	}
 
-	user, err := server.store.GetUserFromName(ctx, req.UserLogin)
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+
+	user, err := server.store.GetUserFromName(ctx, authPayload.UserLogin)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -85,8 +88,8 @@ func (server *Server) getUser(ctx *gin.Context) {
 	}
 
 	//paying for not seperating out user from account here, but I think it's fine.
-	user.HashedPassword = ""
-	ctx.JSON(http.StatusOK, user)
+	rsp := newUserResponse(user)
+	ctx.JSON(http.StatusOK, rsp)
 }
 
 type loginUserRequest struct {
@@ -105,6 +108,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
+
 	user, err := server.store.GetUser(ctx, req.UserLogin)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -123,6 +127,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 
 	duration := 15 * time.Minute
 	accessToken, err := server.tokenMaker.CreateToken(
+		user.ID,
 		user.UserLogin,
 		duration,
 	)
