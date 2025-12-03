@@ -45,8 +45,8 @@ type StockDatum struct {
 
 type User struct {
 	ID             int64  `json:"id"`
-	Role           string `json:"role"`
 	UserLogin      string `json:"user_login"`
+	Role           string `json:"role"`
 	HashedPassword string `json:"hashed_password"`
 	Dollars        int64  `json:"dollars"`
 	Cents          int64  `json:"cents"`

@@ -14,7 +14,7 @@ const createUser = `-- name: CreateUser :one
 INSERT INTO
   users (user_login, hashed_password, dollars, cents)
 VALUES
-  (?, ?, ?, ?) RETURNING id, role, user_login, hashed_password, dollars, cents
+  (?, ?, ?, ?) RETURNING id, user_login, role, hashed_password, dollars, cents
 `
 
 type CreateUserParams struct {
@@ -34,8 +34,8 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.Role,
 		&i.UserLogin,
+		&i.Role,
 		&i.HashedPassword,
 		&i.Dollars,
 		&i.Cents,
@@ -45,7 +45,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 
 const getUserFromId = `-- name: GetUserFromId :one
 SELECT
-  id, role, user_login, hashed_password, dollars, cents
+  id, user_login, role, hashed_password, dollars, cents
 FROM
   users
 WHERE
@@ -59,8 +59,8 @@ func (q *Queries) GetUserFromId(ctx context.Context, id int64) (User, error) {
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.Role,
 		&i.UserLogin,
+		&i.Role,
 		&i.HashedPassword,
 		&i.Dollars,
 		&i.Cents,
@@ -70,7 +70,7 @@ func (q *Queries) GetUserFromId(ctx context.Context, id int64) (User, error) {
 
 const getUserFromName = `-- name: GetUserFromName :one
 SELECT
-  id, role, user_login, hashed_password, dollars, cents
+  id, user_login, role, hashed_password, dollars, cents
 FROM
   users
 WHERE
@@ -84,8 +84,8 @@ func (q *Queries) GetUserFromName(ctx context.Context, userLogin string) (User, 
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.Role,
 		&i.UserLogin,
+		&i.Role,
 		&i.HashedPassword,
 		&i.Dollars,
 		&i.Cents,
@@ -96,14 +96,16 @@ func (q *Queries) GetUserFromName(ctx context.Context, userLogin string) (User, 
 const updateUser = `-- name: UpdateUser :one
 UPDATE users
 SET
-  hashed_password = COALESCE(?1, hashed_password),
-  dollars = COALESCE(?2, dollars),
-  cents = COALESCE(?3, cents)
+  user_login = COALESCE(?1, user_login),
+  hashed_password = COALESCE(?2, hashed_password),
+  dollars = COALESCE(?3, dollars),
+  cents = COALESCE(?4, cents)
 WHERE
-  user_login = ?4 RETURNING id, role, user_login, hashed_password, dollars, cents
+  user_login = ?5 RETURNING id, user_login, role, hashed_password, dollars, cents
 `
 
 type UpdateUserParams struct {
+	NewLogin       sql.NullString `json:"new_login"`
 	HashedPassword sql.NullString `json:"hashed_password"`
 	Dollars        sql.NullInt64  `json:"dollars"`
 	Cents          sql.NullInt64  `json:"cents"`
@@ -112,6 +114,7 @@ type UpdateUserParams struct {
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, updateUser,
+		arg.NewLogin,
 		arg.HashedPassword,
 		arg.Dollars,
 		arg.Cents,
@@ -120,8 +123,8 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.Role,
 		&i.UserLogin,
+		&i.Role,
 		&i.HashedPassword,
 		&i.Dollars,
 		&i.Cents,

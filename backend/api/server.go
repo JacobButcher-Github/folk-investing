@@ -37,17 +37,18 @@ func NewServer(store *db.Store) (*Server, error) {
 func (server *Server) setupRouter() {
 
 	router := gin.Default()
-
+	//user registration and login + token renewal
 	router.POST("/users/register", server.createUser)
 	router.POST("users/login", server.loginUser)
 	router.POST("/tokens/renew_access", server.renewAccessToken)
 
+	//stock data and user information
 	router.GET("stocks/stocks_data", server.stocksData)
+	router.GET("/users/:user_login", server.getUser)
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
-	authRoutes.GET("/users/:user_login", server.getUser)
-	authRoutes.POST("stocks/new_stock", server.createStock)
-	authRoutes.POST("stocks/new_stock_data", server.newStockData)
+	authRoutes.POST("admin/stocks/new_stock", server.createStock)
+	authRoutes.POST("admin/stocks/new_stock_data", server.newStockData)
 	authRoutes.POST("/transaction/buy_stock", server.buyTransaction)
 	authRoutes.POST("/transaction/sell_stock", server.sellTransaction)
 

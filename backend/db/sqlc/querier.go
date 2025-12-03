@@ -10,6 +10,8 @@ import (
 )
 
 type Querier interface {
+	AdminUpdateUser(ctx context.Context, arg AdminUpdateUserParams) (User, error)
+	CreateAdmin(ctx context.Context, arg CreateAdminParams) (User, error)
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateSiteSettings(ctx context.Context, arg CreateSiteSettingsParams) (SiteSetting, error)
 	CreateStock(ctx context.Context, arg CreateStockParams) (Stock, error)
