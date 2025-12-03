@@ -8,7 +8,6 @@ import (
 // CreateUserTxParams contains input parameters of create user transaction
 type CreateUserTxParams struct {
 	CreateUserParams
-	AfterCreate func(user User) error
 }
 
 // CreateUserTxResult is result of the create user transaction
@@ -31,7 +30,7 @@ func (store *Store) CreateUserTx(ctx context.Context, arg CreateUserTxParams) (C
 				return err
 			}
 
-			return arg.AfterCreate(result.User)
+			return nil
 		})
 	return result, err
 }

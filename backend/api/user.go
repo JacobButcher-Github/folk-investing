@@ -49,11 +49,13 @@ func (server *Server) createUser(ctx *gin.Context) {
 		return
 	}
 
-	arg := db.CreateUserParams{
-		UserLogin:      req.UserLogin,
-		HashedPassword: hashedPassword,
-		Dollars:        100,
-		Cents:          0,
+	arg := db.CreateUserTxParams{
+		CreateUserParams: db.CreateUserParams{
+			UserLogin:      req.UserLogin,
+			HashedPassword: hashedPassword,
+			Dollars:        100,
+			Cents:          0,
+		},
 	}
 
 	user, err := server.store.CreateUserTx(ctx, arg)
@@ -62,7 +64,7 @@ func (server *Server) createUser(ctx *gin.Context) {
 		return
 	}
 
-	rsp := newUserResponse(user)
+	rsp := newUserResponse(user.User)
 	ctx.JSON(http.StatusOK, rsp)
 }
 
