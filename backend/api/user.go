@@ -18,6 +18,20 @@ type createUserRequest struct {
 	Password  string `json:"password" binding:"required"`
 }
 
+type userResponse struct {
+	UserLogin string `json:"user_login"`
+	Dollars   int64  `json:"dollars"`
+	Cents     int64  `json:"cents"`
+}
+
+func newUserResponse(user db.User) userResponse {
+	return userResponse{
+		UserLogin: user.UserLogin,
+		Dollars:   user.Dollars,
+		Cents:     user.Cents,
+	}
+}
+
 func (server *Server) createUser(ctx *gin.Context) {
 	var req createUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -44,7 +58,8 @@ func (server *Server) createUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, user)
+	rsp := newUserResponse(user)
+	ctx.JSON(http.StatusOK, rsp)
 }
 
 type getUserRequest struct {

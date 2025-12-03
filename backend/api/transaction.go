@@ -98,6 +98,7 @@ func (server *Server) validLockout(ctx *gin.Context) bool {
 	}
 	return true
 }
+
 func (server *Server) validUser(ctx *gin.Context, userID int64) bool {
 	_, err := server.store.GetUserFromId(ctx, userID)
 	if err != nil {
