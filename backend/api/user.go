@@ -159,8 +159,8 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		ID:           refreshPayload.ID,
 		UserLogin:    user.UserLogin,
 		RefreshToken: refreshToken,
-		UserAgent:    "", //TODO: fill this out
-		ClientIp:     "",
+		UserAgent:    ctx.Request.UserAgent(),
+		ClientIp:     ctx.ClientIP(),
 		IsBlocked:    0,
 		ExpiresAt:    refreshPayload.ExpiredAt,
 	})

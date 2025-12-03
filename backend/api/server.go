@@ -40,6 +40,7 @@ func (server *Server) setupRouter() {
 
 	router.POST("/users/register", server.createUser)
 	router.POST("users/login", server.loginUser)
+	router.POST("/tokens/renew_access", server.renewAccessToken)
 
 	router.POST("stocks/new_stock", server.createStock)
 	router.POST("stocks/new_stock_data", server.newStockData)
