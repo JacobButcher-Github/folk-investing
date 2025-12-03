@@ -36,6 +36,8 @@ func (server *Server) createStock(ctx *gin.Context) {
 		req.ImagePath = "default/image/path"
 	}
 
+	//TODO: auth needed here. If authpayload roal != admin or something
+
 	arg := db.CreateStockParams{
 		Name:      req.StockName,
 		ImagePath: sql.NullString{String: req.ImagePath, Valid: true},
@@ -97,5 +99,43 @@ func (server *Server) newStockData(ctx *gin.Context) {
 
 	var rsp createStockDataResponse
 	rsp.StockData = result.NewStockData
+	ctx.JSON(http.StatusOK, rsp)
+}
+
+type getStocksDataResponse struct {
+	StockData []db.StockDatum `json:"stock_data"`
+}
+
+func (server *Server) stocksData(ctx *gin.Context) {
+	stocks, err := server.store.GetAllStocks(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	var stockIDs []int64
+	for i := range stocks {
+		stockIDs = append(stockIDs, stocks[i].ID)
+	}
+
+	limit, err := server.store.GetNumberEvents(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	arg := db.GetStocksDataParams{
+		StockIds: stockIDs,
+		Limit:    limit,
+	}
+
+	res, err := server.store.GetStocksData(ctx, arg)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	var rsp getStocksDataResponse
+	rsp.StockData = res.NewStockData
 	ctx.JSON(http.StatusOK, rsp)
 }

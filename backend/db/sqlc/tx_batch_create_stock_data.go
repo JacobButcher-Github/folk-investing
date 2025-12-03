@@ -25,17 +25,17 @@ func (store *Store) BatchCreateStockDataTx(ctx context.Context, arg BatchCreateS
 		func(q *Queries) error {
 			var err error
 			var newStockData StockDatum
-			for i := range arg.newStockData {
+			for i := range arg.NewStockData {
 				newStockData, err = q.CreateStockData(ctx, CreateStockDataParams{
-					StockID:      arg.newStockData[i].StockID,
-					EventLabel:   arg.newStockData[i].EventLabel,
-					ValueDollars: arg.newStockData[i].ValueDollars,
-					ValueCents:   arg.newStockData[i].ValueCents,
+					StockID:      arg.NewStockData[i].StockID,
+					EventLabel:   arg.NewStockData[i].EventLabel,
+					ValueDollars: arg.NewStockData[i].ValueDollars,
+					ValueCents:   arg.NewStockData[i].ValueCents,
 				})
 				if err != nil {
 					return err
 				}
-				result.newStockData = append(result.newStockData, newStockData)
+				result.NewStockData = append(result.NewStockData, newStockData)
 			}
 			return nil
 		})

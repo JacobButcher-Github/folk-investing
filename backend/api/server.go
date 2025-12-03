@@ -42,7 +42,7 @@ func (server *Server) setupRouter() {
 
 	router.POST("stocks/new_stock", server.createStock)
 	router.POST("stocks/new_stock_data", server.newStockData)
-	router.GET("stocks/stock_data", server.stockData)
+	router.GET("stocks/stocks_data", server.stocksData)
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 	authRoutes.GET("/users/:user_login", server.getUser)

@@ -8,6 +8,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"strings"
 )
 
 const createStock = `-- name: CreateStock :one
@@ -70,6 +71,36 @@ WHERE
 func (q *Queries) DeleteStock(ctx context.Context, name string) error {
 	_, err := q.db.ExecContext(ctx, deleteStock, name)
 	return err
+}
+
+const getAllStocks = `-- name: GetAllStocks :many
+SELECT
+  id, name, image_path
+FROM
+  STOCKS
+`
+
+func (q *Queries) GetAllStocks(ctx context.Context) ([]Stock, error) {
+	rows, err := q.db.QueryContext(ctx, getAllStocks)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Stock{}
+	for rows.Next() {
+		var i Stock
+		if err := rows.Scan(&i.ID, &i.Name, &i.ImagePath); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getStockData = `-- name: GetStockData :one
@@ -137,6 +168,75 @@ func (q *Queries) GetStockFromName(ctx context.Context, name string) (Stock, err
 	var i Stock
 	err := row.Scan(&i.ID, &i.Name, &i.ImagePath)
 	return i, err
+}
+
+const getStocksData = `-- name: GetStocksData :many
+SELECT
+  sd.id, sd.stock_id, sd.event_label, sd.value_dollars, sd.value_cents
+FROM
+  stock_data sd
+WHERE
+  sd.stock_id IN (/*SLICE:stock_ids*/?)
+  AND sd.id IN (
+    SELECT
+      id
+    FROM
+      stock_data
+    WHERE
+      stock_id = sd.stock_id
+    ORDER BY
+      id ASC
+    LIMIT
+      ?
+  )
+ORDER BY
+  sd.value_dollars,
+  sd.value_cents
+`
+
+type GetStocksDataParams struct {
+	StockIds []int64 `json:"stock_ids"`
+	Limit    int64   `json:"limit"`
+}
+
+func (q *Queries) GetStocksData(ctx context.Context, arg GetStocksDataParams) ([]StockDatum, error) {
+	query := getStocksData
+	var queryParams []interface{}
+	if len(arg.StockIds) > 0 {
+		for _, v := range arg.StockIds {
+			queryParams = append(queryParams, v)
+		}
+		query = strings.Replace(query, "/*SLICE:stock_ids*/?", strings.Repeat(",?", len(arg.StockIds))[1:], 1)
+	} else {
+		query = strings.Replace(query, "/*SLICE:stock_ids*/?", "NULL", 1)
+	}
+	queryParams = append(queryParams, arg.Limit)
+	rows, err := q.db.QueryContext(ctx, query, queryParams...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []StockDatum{}
+	for rows.Next() {
+		var i StockDatum
+		if err := rows.Scan(
+			&i.ID,
+			&i.StockID,
+			&i.EventLabel,
+			&i.ValueDollars,
+			&i.ValueCents,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const pruneStockData = `-- name: PruneStockData :exec

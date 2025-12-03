@@ -24,6 +24,12 @@ WHERE
 LIMIT
   1;
 
+-- name: GetAllStocks :many
+SELECT
+  *
+FROM
+  STOCKS;
+
 -- name: UpdateStock :one
 UPDATE stocks
 SET
@@ -71,6 +77,29 @@ ORDER BY
   id ASC
 LIMIT
   ?;
+
+-- name: GetStocksData :many
+SELECT
+  sd.*
+FROM
+  stock_data sd
+WHERE
+  sd.stock_id IN (sqlc.slice (stock_ids))
+  AND sd.id IN (
+    SELECT
+      id
+    FROM
+      stock_data
+    WHERE
+      stock_id = sd.stock_id
+    ORDER BY
+      id ASC
+    LIMIT
+      ?
+  )
+ORDER BY
+  sd.value_dollars,
+  sd.value_cents;
 
 -- name: UpdateStockData :one
 UPDATE stock_data
