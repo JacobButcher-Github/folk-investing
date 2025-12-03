@@ -7,12 +7,12 @@ import (
 
 // BatchCreateStockDataParams contains input parameters of batch create stock data transaction
 type BatchCreateStockDataParams struct {
-	newStockData []CreateStockDataParams
+	NewStockData []CreateStockDataParams
 }
 
 // BatchCreateStockDataResult is result of the batch create stock data transaction
 type BatchCreateStockDataResult struct {
-	newStockData []StockDatum
+	NewStockData []StockDatum
 }
 
 // BatchCreateStockDataTx a new StockData for each stock given in ID.
