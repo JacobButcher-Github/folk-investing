@@ -24,7 +24,8 @@ type Server struct {
 
 // NewServer creates a new http server and setup routing
 func NewServer(config util.Config, store *db.Store) (*Server, error) {
-	tokenMaker, err := token.NewPasetoMaker("")
+	pasetoToken := util.RandomString(32)
+	tokenMaker, err := token.NewPasetoMaker(pasetoToken)
 	if err != nil {
 		return nil, fmt.Errorf("Cannot create token maker: %w", err)
 	}

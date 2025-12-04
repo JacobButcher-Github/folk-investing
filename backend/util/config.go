@@ -20,7 +20,7 @@ type Config struct {
 func ReadConfig() (Config, error) {
 	var config Config
 
-	file, err := os.Open("../../.env")
+	file, err := os.Open("../.env")
 	if err != nil {
 		return config, err
 	}
@@ -29,9 +29,10 @@ func ReadConfig() (Config, error) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		if line[0] == '#' {
+		if line == "" || line[0] == '#' {
 			continue
 		}
+
 		lineSplit := strings.Split(line, " ")
 		switch lineSplit[0] {
 		case "admin_username:":
@@ -39,31 +40,31 @@ func ReadConfig() (Config, error) {
 				return config, fmt.Errorf("admin_username in .env unchanged")
 			}
 			config.AdminUsername = lineSplit[1]
-		case "admin_password":
+		case "admin_password:":
 			if lineSplit[1] == "CHANGE" {
 				return config, fmt.Errorf("admin_password in .env unchanged")
 			}
 			config.AdminPassword = lineSplit[1]
-		case "server_address":
+		case "server_address:":
 			config.ServerAddress = lineSplit[1]
-		case "access_token_duration":
+		case "access_token_duration:":
 			sliceLimit := len(lineSplit[1]) - 1
-			timeUnitChar := lineSplit[sliceLimit:]
-			timeUnit := charToTimeValue(strings.Join(timeUnitChar, ""))
+			timeUnitChar := lineSplit[1][sliceLimit:]
+			timeUnit := charToTimeValue(timeUnitChar)
 
-			timeValueChar := lineSplit[:sliceLimit]
-			timeValue, err := strconv.Atoi(strings.Join(timeValueChar, ""))
+			timeValueChar := lineSplit[1][:sliceLimit]
+			timeValue, err := strconv.Atoi(timeValueChar)
 			if err != nil {
 				return config, err
 			}
 			config.AccessTokenDuration = time.Duration(timeValue) * timeUnit
-		case "refresh_token_duration":
+		case "refresh_token_duration:":
 			sliceLimit := len(lineSplit[1]) - 1
-			timeUnitChar := lineSplit[sliceLimit:]
-			timeUnit := charToTimeValue(strings.Join(timeUnitChar, ""))
+			timeUnitChar := lineSplit[1][sliceLimit:]
+			timeUnit := charToTimeValue(timeUnitChar)
 
-			timeValueChar := lineSplit[:sliceLimit]
-			timeValue, err := strconv.Atoi(strings.Join(timeValueChar, ""))
+			timeValueChar := lineSplit[1][:sliceLimit]
+			timeValue, err := strconv.Atoi(timeValueChar)
 			if err != nil {
 				return config, err
 			}
