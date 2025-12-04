@@ -166,7 +166,7 @@ SET
     lockout_time_start
   )
 WHERE
-  id = 0 RETURNING id, number_of_events_visible, value_symbol, event_label, lockout, lockout_time_start
+  id = 1 RETURNING id, number_of_events_visible, value_symbol, event_label, lockout, lockout_time_start
 `
 
 type UpdateSettingsParams struct {

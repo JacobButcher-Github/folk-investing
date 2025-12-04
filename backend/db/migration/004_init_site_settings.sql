@@ -1,6 +1,6 @@
 --TABLES
 CREATE TABLE IF NOT EXISTS site_settings (
-  id INTEGER PRIMARY KEY CHECK (id = 0),
+  id INTEGER PRIMARY KEY CHECK (id = 1),
   number_of_events_visible INTEGER DEFAULT 10 NOT NULL,
   value_symbol TEXT DEFAULT "$" NOT NULL,
   event_label TEXT DEFAULT "instance" NOT NULL,

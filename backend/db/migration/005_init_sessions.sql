@@ -8,6 +8,6 @@ CREATE TABLE IF NOT EXISTS sessions (
   -- 0 = false (not locked), 1 = true (locked)
   is_blocked INTEGER DEFAULT 0 NOT NULL,
   expires_at DATETIME NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT DATETIME ('now'),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_login) REFERENCES users (user_login)
 );

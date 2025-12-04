@@ -64,7 +64,7 @@ func (server *Server) setupRouter() {
 func (server *Server) Start(address string) error {
 	hashedPassword, err := util.HashPassword(server.config.AdminPassword)
 	if err != nil {
-		return fmt.Errorf("unable to hash admin password: ", err)
+		return fmt.Errorf("unable to hash admin password: %w", err)
 	}
 
 	arg := db.CreateAdminParams{

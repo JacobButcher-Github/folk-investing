@@ -9,6 +9,12 @@ import (
 	"time"
 )
 
+type Migration struct {
+	ID        int64        `json:"id"`
+	Name      string       `json:"name"`
+	AppliedAt sql.NullTime `json:"applied_at"`
+}
+
 type Session struct {
 	ID           interface{} `json:"id"`
 	UserLogin    string      `json:"user_login"`
@@ -17,7 +23,7 @@ type Session struct {
 	ClientIp     string      `json:"client_ip"`
 	IsBlocked    int64       `json:"is_blocked"`
 	ExpiresAt    time.Time   `json:"expires_at"`
-	CreatedAt    interface{} `json:"created_at"`
+	CreatedAt    time.Time   `json:"created_at"`
 }
 
 type SiteSetting struct {

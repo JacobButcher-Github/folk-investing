@@ -71,4 +71,4 @@ SET
     lockout_time_start
   )
 WHERE
-  id = 0 RETURNING *;
+  id = 1 RETURNING *;

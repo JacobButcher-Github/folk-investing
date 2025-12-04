@@ -6,6 +6,8 @@ import (
 	"os"
 	"testing"
 
+	migration "home/osarukun/repos/tower-investing/backend/db"
+
 	_ "modernc.org/sqlite"
 )
 
@@ -22,6 +24,12 @@ func TestMain(m *testing.M) {
 	testDB, err = sql.Open(dbDriver, dbSource)
 	if err != nil {
 		log.Fatal("cannot connect to db", err)
+	}
+	testDB.Exec("PRAGMA journal_mode=WAL;")
+
+	err = migration.RunMigrations(testDB, "../migration/")
+	if err != nil {
+		log.Fatal("migration error: ", err)
 	}
 
 	testQueries = New(testDB)

@@ -36,6 +36,9 @@ func main() {
 	conn.Exec("PRAGMA journal_mode=WAL;")
 
 	err = migration.RunMigrations(conn, "./db/migration/")
+	if err != nil {
+		log.Fatal("migration error: ", err)
+	}
 
 	store := db.NewStore(conn)
 	server, err := api.NewServer(config, store)

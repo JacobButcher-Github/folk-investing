@@ -15,22 +15,27 @@ import (
 )
 
 func createRandomSiteSettings(t *testing.T) SiteSetting {
-	arg := CreateSiteSettingsParams{
-		NumberOfEventsVisible: util.RandomInt(1, 50),
-		ValueSymbol:           util.RandomString(1),
-		EventLabel:            util.RandomString(10),
-		LockoutTimeStart:      time.Now(),
+	settings1, err := testQueries.GetSiteSettings(context.Background())
+	if err == sql.ErrNoRows {
+		arg := CreateSiteSettingsParams{
+			NumberOfEventsVisible: util.RandomInt(1, 50),
+			ValueSymbol:           util.RandomString(1),
+			EventLabel:            util.RandomString(10),
+			LockoutTimeStart:      time.Now(),
+		}
+
+		settings, err := testQueries.CreateSiteSettings(context.Background(), arg)
+		require.NoError(t, err)
+		require.NotEmpty(t, settings)
+
+		require.Equal(t, settings.NumberOfEventsVisible, arg.NumberOfEventsVisible)
+		require.Equal(t, settings.ValueSymbol, arg.ValueSymbol)
+		require.Equal(t, settings.EventLabel, arg.EventLabel)
+		require.Equal(t, settings.LockoutTimeStart, arg.LockoutTimeStart)
+		return settings
 	}
-
-	settings, err := testQueries.CreateSiteSettings(context.Background(), arg)
 	require.NoError(t, err)
-	require.NotEmpty(t, settings)
-
-	require.Equal(t, settings.NumberOfEventsVisible, arg.NumberOfEventsVisible)
-	require.Equal(t, settings.ValueSymbol, arg.ValueSymbol)
-	require.Equal(t, settings.EventLabel, arg.EventLabel)
-	require.Equal(t, settings.LockoutTimeStart, arg.LockoutTimeStart)
-	return settings
+	return settings1
 }
 
 func TestCreateSiteSettings(t *testing.T) {

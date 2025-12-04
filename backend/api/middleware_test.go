@@ -27,9 +27,10 @@ func addAuthorization(
 	require.NoError(t, err)
 	require.NotEmpty(t, payload)
 
-	authorizationHeader := fmt.Sprint("%s %s", authorizationType, token)
+	authorizationHeader := fmt.Sprintf("%s %s", authorizationType, token)
 	request.Header.Set(authorizationHeaderKey, authorizationHeader)
 }
+
 func TestAuthMiddleware(t *testing.T) {
 	testCases := []struct {
 		name          string
@@ -85,7 +86,7 @@ func TestAuthMiddleware(t *testing.T) {
 	for i := range testCases {
 		tc := testCases[i]
 		t.Run(tc.name, func(t *testing.T) {
-			server := NewTestServer(t, nil)
+			server := NewTestServer(t)
 			authPath := "/auth"
 			server.router.GET(
 				authPath,
