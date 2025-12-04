@@ -73,7 +73,7 @@ func TestUpdateSiteSettingsNumEvents(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, updatedSettings)
 
-	require.Equal(t, updatedSettingsArgs.NumberOfEventsVisible, updatedSettings.NumberOfEventsVisible)
+	require.Equal(t, updatedSettingsArgs.NumberOfEventsVisible.Int64, updatedSettings.NumberOfEventsVisible)
 	require.NotEqual(t, settings1.NumberOfEventsVisible, updatedSettings.NumberOfEventsVisible)
 
 	require.Equal(t, settings1.ValueSymbol, updatedSettings.ValueSymbol)
@@ -95,7 +95,7 @@ func TestUpdateSiteSettingsValueSymbol(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, updatedSettings)
 
-	require.Equal(t, updatedSettingsArgs.ValueSymbol, updatedSettings.ValueSymbol)
+	require.Equal(t, updatedSettingsArgs.ValueSymbol.String, updatedSettings.ValueSymbol)
 	require.NotEqual(t, settings1.ValueSymbol, updatedSettings.ValueSymbol)
 
 	require.Equal(t, settings1.NumberOfEventsVisible, updatedSettings.NumberOfEventsVisible)
@@ -117,7 +117,7 @@ func TestUpdateSiteSettingsEventLabel(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, updatedSettings)
 
-	require.Equal(t, updatedSettingsArgs.EventLabel, updatedSettings.EventLabel)
+	require.Equal(t, updatedSettingsArgs.EventLabel.String, updatedSettings.EventLabel)
 	require.NotEqual(t, settings1.EventLabel, updatedSettings.EventLabel)
 
 	require.Equal(t, settings1.NumberOfEventsVisible, updatedSettings.NumberOfEventsVisible)
@@ -139,7 +139,7 @@ func TestUpdateSiteSettingsLockout(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, updatedSettings)
 
-	require.Equal(t, updatedSettingsArgs.LockoutTimeStart, updatedSettings.LockoutTimeStart)
+	require.Equal(t, updatedSettingsArgs.LockoutTimeStart.Time, updatedSettings.LockoutTimeStart)
 	require.NotEqual(t, settings1.LockoutTimeStart, updatedSettings.LockoutTimeStart)
 
 	require.Equal(t, settings1.NumberOfEventsVisible, updatedSettings.NumberOfEventsVisible)
@@ -162,12 +162,12 @@ func TestUpdateSiteSettingsAllFields(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, updatedSettings)
 
-	require.Equal(t, updatedSettingsArgs.NumberOfEventsVisible, updatedSettings.NumberOfEventsVisible)
+	require.Equal(t, updatedSettingsArgs.NumberOfEventsVisible.Int64, updatedSettings.NumberOfEventsVisible)
 	require.NotEqual(t, settings1.NumberOfEventsVisible, updatedSettings.NumberOfEventsVisible)
-	require.Equal(t, updatedSettingsArgs.ValueSymbol, updatedSettings.ValueSymbol)
+	require.Equal(t, updatedSettingsArgs.ValueSymbol.String, updatedSettings.ValueSymbol)
 	require.NotEqual(t, settings1.ValueSymbol, updatedSettings.ValueSymbol)
-	require.Equal(t, updatedSettingsArgs.EventLabel, updatedSettings.EventLabel)
+	require.Equal(t, updatedSettingsArgs.EventLabel.String, updatedSettings.EventLabel)
 	require.NotEqual(t, settings1.EventLabel, updatedSettings.EventLabel)
-	require.Equal(t, updatedSettingsArgs.LockoutTimeStart, updatedSettings.LockoutTimeStart)
+	require.Equal(t, updatedSettingsArgs.LockoutTimeStart.Time, updatedSettings.LockoutTimeStart)
 	require.NotEqual(t, settings1.LockoutTimeStart, updatedSettings.LockoutTimeStart)
 }

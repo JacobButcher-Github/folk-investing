@@ -24,10 +24,10 @@ VALUES
 `
 
 type CreateSiteSettingsParams struct {
-	NumberOfEventsVisible int64       `json:"number_of_events_visible"`
-	ValueSymbol           interface{} `json:"value_symbol"`
-	EventLabel            interface{} `json:"event_label"`
-	LockoutTimeStart      time.Time   `json:"lockout_time_start"`
+	NumberOfEventsVisible int64     `json:"number_of_events_visible"`
+	ValueSymbol           string    `json:"value_symbol"`
+	EventLabel            string    `json:"event_label"`
+	LockoutTimeStart      time.Time `json:"lockout_time_start"`
 }
 
 func (q *Queries) CreateSiteSettings(ctx context.Context, arg CreateSiteSettingsParams) (SiteSetting, error) {
@@ -58,9 +58,9 @@ LIMIT
   1
 `
 
-func (q *Queries) GetEventLabel(ctx context.Context) (interface{}, error) {
+func (q *Queries) GetEventLabel(ctx context.Context) (string, error) {
 	row := q.db.QueryRowContext(ctx, getEventLabel)
-	var event_label interface{}
+	var event_label string
 	err := row.Scan(&event_label)
 	return event_label, err
 }
@@ -145,9 +145,9 @@ LIMIT
   1
 `
 
-func (q *Queries) GetValueSymbol(ctx context.Context) (interface{}, error) {
+func (q *Queries) GetValueSymbol(ctx context.Context) (string, error) {
 	row := q.db.QueryRowContext(ctx, getValueSymbol)
-	var value_symbol interface{}
+	var value_symbol string
 	err := row.Scan(&value_symbol)
 	return value_symbol, err
 }
@@ -170,10 +170,10 @@ WHERE
 `
 
 type UpdateSettingsParams struct {
-	NumberOfEventsVisible sql.NullInt64 `json:"number_of_events_visible"`
-	ValueSymbol           interface{}   `json:"value_symbol"`
-	EventLabel            interface{}   `json:"event_label"`
-	LockoutTimeStart      sql.NullTime  `json:"lockout_time_start"`
+	NumberOfEventsVisible sql.NullInt64  `json:"number_of_events_visible"`
+	ValueSymbol           sql.NullString `json:"value_symbol"`
+	EventLabel            sql.NullString `json:"event_label"`
+	LockoutTimeStart      sql.NullTime   `json:"lockout_time_start"`
 }
 
 func (q *Queries) UpdateSettings(ctx context.Context, arg UpdateSettingsParams) (SiteSetting, error) {

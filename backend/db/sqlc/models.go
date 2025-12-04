@@ -27,12 +27,12 @@ type Session struct {
 }
 
 type SiteSetting struct {
-	ID                    int64       `json:"id"`
-	NumberOfEventsVisible int64       `json:"number_of_events_visible"`
-	ValueSymbol           interface{} `json:"value_symbol"`
-	EventLabel            interface{} `json:"event_label"`
-	Lockout               int64       `json:"lockout"`
-	LockoutTimeStart      time.Time   `json:"lockout_time_start"`
+	ID                    int64     `json:"id"`
+	NumberOfEventsVisible int64     `json:"number_of_events_visible"`
+	ValueSymbol           string    `json:"value_symbol"`
+	EventLabel            string    `json:"event_label"`
+	Lockout               int64     `json:"lockout"`
+	LockoutTimeStart      time.Time `json:"lockout_time_start"`
 }
 
 type Stock struct {

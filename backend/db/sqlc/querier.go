@@ -21,7 +21,7 @@ type Querier interface {
 	DeleteStock(ctx context.Context, name string) error
 	DeleteUserStock(ctx context.Context, arg DeleteUserStockParams) error
 	GetAllStocks(ctx context.Context) ([]Stock, error)
-	GetEventLabel(ctx context.Context) (interface{}, error)
+	GetEventLabel(ctx context.Context) (string, error)
 	GetLockoutStatus(ctx context.Context) (int64, error)
 	GetLockoutTime(ctx context.Context) (time.Time, error)
 	GetNumberEvents(ctx context.Context) (int64, error)
@@ -34,7 +34,7 @@ type Querier interface {
 	GetUserFromId(ctx context.Context, id int64) (User, error)
 	GetUserFromName(ctx context.Context, userLogin string) (User, error)
 	GetUserStock(ctx context.Context, arg GetUserStockParams) (UserStock, error)
-	GetValueSymbol(ctx context.Context) (interface{}, error)
+	GetValueSymbol(ctx context.Context) (string, error)
 	PruneStockData(ctx context.Context, arg PruneStockDataParams) error
 	UpdateSettings(ctx context.Context, arg UpdateSettingsParams) (SiteSetting, error)
 	UpdateStock(ctx context.Context, arg UpdateStockParams) (Stock, error)
