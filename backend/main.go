@@ -12,8 +12,9 @@ import (
 	_ "modernc.org/sqlite"
 
 	//local
-	"github.com/JacobButcher-Github/folk-investing/backend/api"
-	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
+	"home/osarukun/repos/tower-investing/backend/api"
+
+	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
 )
 
 const (
@@ -29,7 +30,7 @@ func main() {
 
 	conn, err := sql.Open(dbDriver, dbSource)
 	if err != nil {
-		log.Fatal("cannot connec to DB: ", err)
+		log.Fatal("cannot connect to DB: ", err)
 	}
 
 	conn.Exec("PRAGMA journal_mode=WAL;")
@@ -37,9 +38,12 @@ func main() {
 	err = migration.RunMigrations(conn, "./db/migration/")
 
 	store := db.NewStore(conn)
-	server := api.NewServer(store)
+	server, err := api.NewServer(config, store)
+	if err != nil {
+		log.Fatal("cannot create server: ", err)
+	}
 
-	err = server.Start(serverAddress)
+	err = server.Start(config.ServerAddress)
 	if err != nil {
 		log.Fatal("cannot start server: ", err)
 	}

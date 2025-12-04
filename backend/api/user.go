@@ -130,7 +130,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		return
 	}
 
-	accessDuration := 15 * time.Minute
+	accessDuration := server.config.AccessTokenDuration
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
 		user.ID,
 		user.UserLogin,
@@ -142,7 +142,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		return
 	}
 
-	refreshDuration := 24 * time.Hour
+	refreshDuration := server.config.RefreshTokenDuration
 
 	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
 		user.ID,

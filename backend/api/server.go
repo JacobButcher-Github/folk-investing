@@ -2,6 +2,7 @@ package api
 
 import (
 	//stl
+	"context"
 	"fmt"
 
 	//go package
@@ -9,23 +10,26 @@ import (
 
 	//local
 	"home/osarukun/repos/tower-investing/backend/token"
+	"home/osarukun/repos/tower-investing/backend/util"
 
 	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
 )
 
 type Server struct {
+	config     util.Config
 	store      *db.Store
 	tokenMaker token.Maker
 	router     *gin.Engine
 }
 
 // NewServer creates a new http server and setup routing
-func NewServer(store *db.Store) (*Server, error) {
+func NewServer(config util.Config, store *db.Store) (*Server, error) {
 	tokenMaker, err := token.NewPasetoMaker("")
 	if err != nil {
 		return nil, fmt.Errorf("Cannot create token maker: %w", err)
 	}
 	server := &Server{
+		config:     config,
 		store:      store,
 		tokenMaker: tokenMaker,
 	}
@@ -35,7 +39,6 @@ func NewServer(store *db.Store) (*Server, error) {
 }
 
 func (server *Server) setupRouter() {
-
 	router := gin.Default()
 	//user registration and login + token renewal
 	router.POST("/users/register", server.createUser)
@@ -58,6 +61,19 @@ func (server *Server) setupRouter() {
 
 // Start runs the HTTP server on a specific address
 func (server *Server) Start(address string) error {
+	hashedPassword, err := util.HashPassword(server.config.AdminPassword)
+	if err != nil {
+		return fmt.Errorf("unable to hash admin password: ", err)
+	}
+
+	arg := db.CreateAdminParams{
+		UserLogin:      server.config.AdminUsername,
+		Role:           util.AdminRole,
+		HashedPassword: hashedPassword,
+		Dollars:        100,
+		Cents:          0,
+	}
+	server.store.CreateAdmin(context.Background(), arg)
 	return server.router.Run(address)
 }
 

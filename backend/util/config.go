@@ -72,7 +72,7 @@ func ReadConfig() (Config, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		return config, fmt.Errorf("Error scanning file: %w", err)
+		return config, fmt.Errorf("Error scanning file:%w", err)
 	}
 
 	return config, nil
