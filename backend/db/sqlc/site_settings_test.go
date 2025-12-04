@@ -139,7 +139,9 @@ func TestUpdateSiteSettingsLockout(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, updatedSettings)
 
-	require.Equal(t, updatedSettingsArgs.LockoutTimeStart.Time, updatedSettings.LockoutTimeStart)
+	if !updatedSettingsArgs.LockoutTimeStart.Time.Equal(updatedSettings.LockoutTimeStart) {
+		require.Equal(t, updatedSettingsArgs.LockoutTimeStart.Time, updatedSettings.LockoutTimeStart)
+	}
 	require.NotEqual(t, settings1.LockoutTimeStart, updatedSettings.LockoutTimeStart)
 
 	require.Equal(t, settings1.NumberOfEventsVisible, updatedSettings.NumberOfEventsVisible)
@@ -168,6 +170,8 @@ func TestUpdateSiteSettingsAllFields(t *testing.T) {
 	require.NotEqual(t, settings1.ValueSymbol, updatedSettings.ValueSymbol)
 	require.Equal(t, updatedSettingsArgs.EventLabel.String, updatedSettings.EventLabel)
 	require.NotEqual(t, settings1.EventLabel, updatedSettings.EventLabel)
-	require.Equal(t, updatedSettingsArgs.LockoutTimeStart.Time, updatedSettings.LockoutTimeStart)
+	if !updatedSettingsArgs.LockoutTimeStart.Time.Equal(updatedSettings.LockoutTimeStart) {
+		require.Equal(t, updatedSettingsArgs.LockoutTimeStart.Time, updatedSettings.LockoutTimeStart)
+	}
 	require.NotEqual(t, settings1.LockoutTimeStart, updatedSettings.LockoutTimeStart)
 }
