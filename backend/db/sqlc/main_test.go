@@ -11,7 +11,7 @@ import (
 
 const (
 	dbDriver = "sqlite"
-	dbSource = ""
+	dbSource = "../test-app.db"
 )
 
 var testQueries *Queries

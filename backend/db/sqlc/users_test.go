@@ -71,6 +71,7 @@ func TestUpdateUserPassword(t *testing.T) {
 	require.NoError(t, err)
 
 	updatedUser, err := testQueries.UpdateUser(context.Background(), UpdateUserParams{
+		sql.NullString{String: "", Valid: false},
 		sql.NullString{String: newHashedPassword, Valid: true},
 		sql.NullInt64{Int64: 0, Valid: false},
 		sql.NullInt64{Int64: 0, Valid: false},
@@ -98,6 +99,7 @@ func TestUpdateUserDollar(t *testing.T) {
 
 	updatedUser, err := testQueries.UpdateUser(context.Background(), UpdateUserParams{
 		sql.NullString{String: "", Valid: false},
+		sql.NullString{String: "", Valid: false},
 		sql.NullInt64{Int64: newDollars, Valid: true},
 		sql.NullInt64{Int64: 0, Valid: false},
 		oldUser.UserLogin,
@@ -123,6 +125,7 @@ func TestUpdateUserCent(t *testing.T) {
 	}
 
 	updatedUser, err := testQueries.UpdateUser(context.Background(), UpdateUserParams{
+		sql.NullString{String: "", Valid: false},
 		sql.NullString{String: "", Valid: false},
 		sql.NullInt64{Int64: 0, Valid: false},
 		sql.NullInt64{Int64: newCents, Valid: true},
@@ -155,6 +158,7 @@ func TestUpdateUserMoney(t *testing.T) {
 
 	updatedUser, err := testQueries.UpdateUser(context.Background(), UpdateUserParams{
 		sql.NullString{String: "", Valid: false},
+		sql.NullString{String: "", Valid: false},
 		sql.NullInt64{Int64: newDollars, Valid: true},
 		sql.NullInt64{Int64: newCents, Valid: true},
 		oldUser.UserLogin,
@@ -172,6 +176,7 @@ func TestUpdateUserMoney(t *testing.T) {
 func TestUpdateUserAllFields(t *testing.T) {
 	oldUser := createRandomUser(t)
 
+	newUsername := util.RandomString(6)
 	newPassword := util.RandomString(6)
 	newHashedPassword, err := util.HashPassword(newPassword)
 	require.NoError(t, err)
@@ -198,6 +203,7 @@ func TestUpdateUserAllFields(t *testing.T) {
 	require.NoError(t, err)
 
 	updatedUser, err := testQueries.UpdateUser(context.Background(), UpdateUserParams{
+		sql.NullString{String: newUsername, Valid: true},
 		sql.NullString{String: newHashedPassword, Valid: true},
 		sql.NullInt64{Int64: newDollars, Valid: true},
 		sql.NullInt64{Int64: newCents, Valid: true},
@@ -205,10 +211,11 @@ func TestUpdateUserAllFields(t *testing.T) {
 	})
 
 	require.NoError(t, err)
+	require.NotEqual(t, oldUser.UserLogin, updatedUser.UserLogin)
 	require.NotEqual(t, oldUser.HashedPassword, updatedUser.HashedPassword)
 	require.NotEqual(t, oldUser.Dollars, updatedUser.Dollars)
 	require.NotEqual(t, oldUser.Cents, updatedUser.Cents)
-	require.Equal(t, oldUser.UserLogin, updatedUser.UserLogin)
+	require.Equal(t, newUsername, updatedUser.UserLogin)
 	require.Equal(t, newHashedPassword, updatedUser.HashedPassword)
 	require.Equal(t, newDollars, updatedUser.Dollars)
 	require.Equal(t, newCents, updatedUser.Cents)

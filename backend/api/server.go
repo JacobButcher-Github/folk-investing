@@ -49,6 +49,7 @@ func (server *Server) setupRouter() {
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 	authRoutes.POST("admin/stocks/new_stock", server.createStock)
 	authRoutes.POST("admin/stocks/new_stock_data", server.newStockData)
+	// authRoutes.POST("admin/user_update", server.adminUserUpdate)
 	authRoutes.POST("/transaction/buy_stock", server.buyTransaction)
 	authRoutes.POST("/transaction/sell_stock", server.sellTransaction)
 
