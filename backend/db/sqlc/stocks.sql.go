@@ -19,8 +19,8 @@ VALUES
 `
 
 type CreateStockParams struct {
-	Name      string         `json:"name"`
-	ImagePath sql.NullString `json:"image_path"`
+	Name      string `json:"name"`
+	ImagePath string `json:"image_path"`
 }
 
 func (q *Queries) CreateStock(ctx context.Context, arg CreateStockParams) (Stock, error) {

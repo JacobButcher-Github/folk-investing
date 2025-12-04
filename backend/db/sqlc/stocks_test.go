@@ -17,7 +17,7 @@ func createRandomStock(t *testing.T) (Stock, StockDatum) {
 
 	stockArg := CreateStockParams{
 		Name:      util.RandomString(16),
-		ImagePath: sql.NullString{String: util.RandomString(8), Valid: true},
+		ImagePath: util.RandomString(8),
 	}
 
 	stock, err := testQueries.CreateStock(context.Background(), stockArg)
@@ -97,10 +97,10 @@ func TestUpdateStockName(t *testing.T) {
 
 func TestUpdateStockImagePath(t *testing.T) {
 	oldStock, _ := createRandomStock(t)
-	var newImagePath sql.NullString
+	var newImagePath string
 
 	for {
-		newImagePath = sql.NullString{String: util.RandomString(8), Valid: true}
+		newImagePath = util.RandomString(8)
 		if oldStock.ImagePath != newImagePath {
 			break
 		}
@@ -108,13 +108,13 @@ func TestUpdateStockImagePath(t *testing.T) {
 
 	updatedStock, err := testQueries.UpdateStock(context.Background(), UpdateStockParams{
 		NewName:   sql.NullString{String: "", Valid: false},
-		ImagePath: newImagePath,
+		ImagePath: sql.NullString{String: newImagePath, Valid: true},
 		Name:      oldStock.Name,
 	})
 
 	require.NoError(t, err)
 	require.NotEqual(t, updatedStock.ImagePath, oldStock.ImagePath)
-	require.Equal(t, updatedStock.ImagePath, newImagePath.String)
+	require.Equal(t, updatedStock.ImagePath, newImagePath)
 	require.Equal(t, oldStock.ID, updatedStock.ID)
 	require.Equal(t, oldStock.Name, updatedStock.Name)
 }
@@ -122,10 +122,10 @@ func TestUpdateStockImagePath(t *testing.T) {
 func TestUpdateStockAllFields(t *testing.T) {
 	oldStock, _ := createRandomStock(t)
 	var newName string
-	var newImagePath sql.NullString
+	var newImagePath string
 	for {
 		newName = util.RandomString(16)
-		newImagePath = sql.NullString{String: util.RandomString(8), Valid: true}
+		newImagePath = util.RandomString(8)
 		if oldStock.ImagePath != newImagePath && oldStock.Name != newName {
 			break
 		}
@@ -133,7 +133,7 @@ func TestUpdateStockAllFields(t *testing.T) {
 
 	updatedStock, err := testQueries.UpdateStock(context.Background(), UpdateStockParams{
 		NewName:   sql.NullString{String: newName, Valid: true},
-		ImagePath: newImagePath,
+		ImagePath: sql.NullString{String: newImagePath, Valid: true},
 		Name:      oldStock.Name,
 	})
 
@@ -141,7 +141,7 @@ func TestUpdateStockAllFields(t *testing.T) {
 	require.NotEqual(t, oldStock.Name, updatedStock.Name)
 	require.NotEqual(t, oldStock.ImagePath, updatedStock.ImagePath)
 	require.Equal(t, newName, updatedStock.Name)
-	require.Equal(t, newImagePath.String, updatedStock.ImagePath)
+	require.Equal(t, newImagePath, updatedStock.ImagePath)
 }
 
 func TestUpdateStockDataID(t *testing.T) {

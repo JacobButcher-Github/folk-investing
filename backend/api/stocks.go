@@ -1,7 +1,6 @@
 package api
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
@@ -25,7 +24,7 @@ type stockResponse struct {
 func newStockResponse(stock db.Stock) stockResponse {
 	return stockResponse{
 		StockName: stock.Name,
-		ImagePath: stock.ImagePath.String,
+		ImagePath: stock.ImagePath,
 	}
 }
 
@@ -47,7 +46,7 @@ func (server *Server) createStock(ctx *gin.Context) {
 
 	arg := db.CreateStockParams{
 		Name:      req.StockName,
-		ImagePath: sql.NullString{String: req.ImagePath, Valid: true},
+		ImagePath: req.ImagePath,
 	}
 
 	stock, err := server.store.CreateStock(ctx, arg)

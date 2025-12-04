@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS stocks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT UNIQUE NOT NULL,
-  image_path TEXT
+  image_path TEXT DEFAULT '/img/default/' NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS stock_data (

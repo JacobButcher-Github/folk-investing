@@ -36,9 +36,9 @@ type SiteSetting struct {
 }
 
 type Stock struct {
-	ID        int64          `json:"id"`
-	Name      string         `json:"name"`
-	ImagePath sql.NullString `json:"image_path"`
+	ID        int64  `json:"id"`
+	Name      string `json:"name"`
+	ImagePath string `json:"image_path"`
 }
 
 type StockDatum struct {
