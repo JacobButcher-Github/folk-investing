@@ -31,7 +31,9 @@ func createRandomSiteSettings(t *testing.T) SiteSetting {
 		require.Equal(t, settings.NumberOfEventsVisible, arg.NumberOfEventsVisible)
 		require.Equal(t, settings.ValueSymbol, arg.ValueSymbol)
 		require.Equal(t, settings.EventLabel, arg.EventLabel)
-		require.Equal(t, settings.LockoutTimeStart, arg.LockoutTimeStart)
+		if !settings.LockoutTimeStart.Equal(arg.LockoutTimeStart) {
+			require.Equal(t, settings.LockoutTimeStart, arg.LockoutTimeStart)
+		}
 		return settings
 	}
 	require.NoError(t, err)
