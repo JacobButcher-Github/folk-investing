@@ -43,7 +43,7 @@ func createRandomStock(t *testing.T) (Stock, StockDatum) {
 	require.Equal(t, stockDataArg.StockID, stockData.StockID)
 	require.Equal(t, stockDataArg.EventLabel, stockData.EventLabel)
 	require.Equal(t, stockDataArg.ValueDollars, stockData.ValueDollars)
-	require.Equal(t, stockDataArg.ValueDollars, stockData.ValueCents)
+	require.Equal(t, stockDataArg.ValueCents, stockData.ValueCents)
 
 	return stock, stockData
 }
