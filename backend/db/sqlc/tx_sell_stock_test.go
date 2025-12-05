@@ -15,13 +15,13 @@ import (
 
 func TestSellStockTx(t *testing.T) {
 	store := NewStore(testDB)
-
+	userStartQuantity := util.RandomInt(5, 1000)
 	randUser := createRandomUser(t)
 	randStock, randStockData := createRandomStock(t)
 	userStock, err := testQueries.CreateUserStock(context.Background(), CreateUserStockParams{
 		UserID:   randUser.ID,
 		StockID:  randStock.ID,
-		Quantity: util.RandomInt(5, 1000),
+		Quantity: userStartQuantity,
 	})
 
 	userStartMoney := randUser.Dollars*100 + randUser.Cents
@@ -59,7 +59,8 @@ func TestSellStockTx(t *testing.T) {
 		resUserStock := result.UserStock
 		require.NotEmpty(t, resUserStock)
 		require.Equal(t, resUserStock.UserID, resUser.ID)
-		require.True(t, int64(0) <= resUserStock.Quantity && resUserStock.Quantity <= int64(amount*int64(n)))
+
+		require.True(t, int64(0) <= resUserStock.Quantity && resUserStock.Quantity <= int64(amount*int64(n)+userStartQuantity))
 	}
 
 	updatedUser, err := testQueries.GetUserFromId(context.Background(), randUser.ID)

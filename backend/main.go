@@ -33,6 +33,7 @@ func main() {
 		log.Fatal("cannot connect to DB: ", err)
 	}
 
+	conn.Exec("PRAGMA busy_timeout = 5000;")
 	conn.Exec("PRAGMA journal_mode=WAL;")
 	conn.Exec("PRAGMA foreign_keys=ON;")
 

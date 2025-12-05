@@ -25,6 +25,8 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatal("cannot connect to db", err)
 	}
+
+	testDB.Exec("PRAGMA busy_timeout = 5000;")
 	testDB.Exec("PRAGMA journal_mode=WAL;")
 	testDB.Exec("PRAGMA foreign_keys = ON;")
 

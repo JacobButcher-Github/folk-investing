@@ -42,8 +42,9 @@ func TestMain(m *testing.M) {
 		log.Fatal("cannot connect to DB:", err)
 	}
 
-	// WAL mode (same as production)
+	conn.Exec("PRAGMA busy_timeout = 5000;")
 	conn.Exec("PRAGMA journal_mode=WAL;")
+	conn.Exec("PRAGMA foreign_keys=ON;")
 
 	// Run migrations
 	err = migration.RunMigrations(conn, "./db/migration/")

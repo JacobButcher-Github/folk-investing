@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"time"
 )
 
 // BuyStockTxParams contains input parameters of buy stock transaction
@@ -21,10 +22,9 @@ type BuyStockTxResult struct {
 // BuyStockTx performs a money subtraction from User and adds stock to associated UserStock
 func (store *Store) BuyStockTx(ctx context.Context, arg BuyStockTxParams) (BuyStockTxResult, error) {
 	var result BuyStockTxResult
-	err := store.execTx(ctx,
-		&sql.TxOptions{
-			Isolation: sql.LevelSerializable,
-		},
+	err := store.retryableTx(ctx,
+		5,
+		5*time.Second,
 		func(q *Queries) error {
 			//check if the associated UserStock exists.
 			userStock, err := q.GetUserStock(ctx, GetUserStockParams{

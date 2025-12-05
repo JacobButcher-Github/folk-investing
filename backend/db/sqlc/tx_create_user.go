@@ -2,7 +2,7 @@ package db
 
 import (
 	"context"
-	"database/sql"
+	"time"
 )
 
 // CreateUserTxParams contains input parameters of create user transaction
@@ -18,10 +18,9 @@ type CreateUserTxResult struct {
 // CreateUserTx performs create user action and AfterCreate function defined in the CraeteUserTxParams
 func (store *Store) CreateUserTx(ctx context.Context, arg CreateUserTxParams) (CreateUserTxResult, error) {
 	var result CreateUserTxResult
-	err := store.execTx(ctx,
-		&sql.TxOptions{
-			Isolation: sql.LevelSerializable,
-		},
+	err := store.retryableTx(ctx,
+		5,
+		5*time.Second,
 		func(q *Queries) error {
 			var err error
 
