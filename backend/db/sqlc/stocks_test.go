@@ -213,8 +213,8 @@ func TestUpdateStockDataMoney(t *testing.T) {
 	updatedStockData, err := testQueries.UpdateStockData(context.Background(), UpdateStockDataParams{
 		NewID:        sql.NullInt64{Int64: 0, Valid: false},
 		NewLabel:     sql.NullString{String: "", Valid: false},
-		ValueDollars: sql.NullInt64{Int64: newDollars, Valid: false},
-		ValueCents:   sql.NullInt64{Int64: newCents, Valid: false},
+		ValueDollars: sql.NullInt64{Int64: newDollars, Valid: true},
+		ValueCents:   sql.NullInt64{Int64: newCents, Valid: true},
 		StockID:      stock.ID,
 		EventLabel:   oldStockData.EventLabel,
 	})
@@ -271,12 +271,12 @@ func TestDeleteStock(t *testing.T) {
 	err := testQueries.DeleteStock(context.Background(), stock.Name)
 	require.NoError(t, err)
 	deletedStock, err := testQueries.GetStockFromName(context.Background(), stock.Name)
-	require.NoError(t, err)
+	require.Error(t, err)
 	require.Empty(t, deletedStock)
 	deletedStockData, err := testQueries.GetStockData(context.Background(), GetStockDataParams{
 		StockID: stock.ID,
 		Limit:   1,
 	})
-	require.NoError(t, err)
+	require.Error(t, err)
 	require.Empty(t, deletedStockData)
 }

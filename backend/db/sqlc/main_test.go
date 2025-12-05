@@ -26,6 +26,7 @@ func TestMain(m *testing.M) {
 		log.Fatal("cannot connect to db", err)
 	}
 	testDB.Exec("PRAGMA journal_mode=WAL;")
+	testDB.Exec("PRAGMA foreign_keys = ON;")
 
 	err = migration.RunMigrations(testDB, "../migration/")
 	if err != nil {

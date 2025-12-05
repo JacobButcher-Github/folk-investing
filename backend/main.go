@@ -34,6 +34,7 @@ func main() {
 	}
 
 	conn.Exec("PRAGMA journal_mode=WAL;")
+	conn.Exec("PRAGMA foreign_keys=ON;")
 
 	err = migration.RunMigrations(conn, "./db/migration/")
 	if err != nil {
