@@ -6,14 +6,20 @@ import (
 	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
 	"home/osarukun/repos/tower-investing/backend/token"
 	"home/osarukun/repos/tower-investing/backend/util"
+	"mime/multipart"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 type createStockRequest struct {
-	StockName string `json:"stock_name" binding:"required"`
-	ImagePath string `json:"image_path"`
+	Image       *multipart.FileHeader `form:"image"`
+	information struct {
+		StockName string `json:"stock_name" binding:"required"`
+		ImagePath string `json:"image_path"`
+	} `form:"information" binding:"required"`
 }
 
 type stockResponse struct {
@@ -30,12 +36,18 @@ func newStockResponse(stock db.Stock) stockResponse {
 
 func (server *Server) createStock(ctx *gin.Context) {
 	var req createStockRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	if err := ctx.ShouldBindWith(&req, binding.FormMultipart); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	if req.ImagePath == "" {
-		req.ImagePath = "default/image/path"
+
+	if req.information.ImagePath == "" {
+		req.information.ImagePath = "../../frontend/public/default_img.webp"
+	} else {
+		var path strings.Builder
+		path.WriteString("../../frontend/public/")
+		path.WriteString(req.information.ImagePath)
+		req.information.ImagePath = path.String()
 	}
 
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
@@ -45,8 +57,8 @@ func (server *Server) createStock(ctx *gin.Context) {
 	}
 
 	arg := db.CreateStockParams{
-		Name:      req.StockName,
-		ImagePath: req.ImagePath,
+		Name:      req.information.StockName,
+		ImagePath: req.information.ImagePath,
 	}
 
 	stock, err := server.store.CreateStock(ctx, arg)
@@ -54,6 +66,15 @@ func (server *Server) createStock(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+
+	if req.Image.Filename != "" {
+		err = ctx.SaveUploadedFile(req.Image, req.information.ImagePath)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+	}
+
 	rsp := newStockResponse(stock)
 	ctx.JSON(http.StatusOK, rsp)
 }

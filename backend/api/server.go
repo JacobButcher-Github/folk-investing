@@ -46,14 +46,16 @@ func (server *Server) setupRouter() {
 	router.POST("users/login", server.loginUser)
 	router.POST("/tokens/renew_access", server.renewAccessToken)
 
-	//stock data and user information
+	//stock data and user information (for leaderboard later probably.)
 	router.GET("stocks/stocks_data", server.stocksData)
 	router.GET("/users/:user_login", server.getUser)
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 	authRoutes.POST("admin/stocks/new_stock", server.createStock)
 	authRoutes.POST("admin/stocks/new_stock_data", server.newStockData)
-	// authRoutes.POST("admin/user_update", server.adminUserUpdate)
+	authRoutes.POST("admin/stocks/list_stock_data", server.listStockData)
+	authRoutes.POST("admin/stocks/edit_stock_data", server.editStockData)
+	authRoutes.POST("admin/user_update", server.adminUserUpdate)
 	authRoutes.POST("/transaction/buy_stock", server.buyTransaction)
 	authRoutes.POST("/transaction/sell_stock", server.sellTransaction)
 
