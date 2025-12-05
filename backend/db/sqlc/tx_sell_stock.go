@@ -24,7 +24,7 @@ func (store *Store) SellStockTx(ctx context.Context, arg SellStockTxParams) (Sel
 	var result SellStockTxResult
 	err := store.retryableTx(ctx,
 		5,
-		5*time.Second,
+		2*time.Second,
 		func(q *Queries) error {
 			//get cost of stock being sold
 			stockData, err := q.GetStockData(ctx, GetStockDataParams{

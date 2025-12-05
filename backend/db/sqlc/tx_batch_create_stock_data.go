@@ -15,12 +15,12 @@ type BatchCreateStockDataResult struct {
 	NewStockData []StockDatum
 }
 
-// BatchCreateStockDataTx a new StockData for each stock given in ID.
+// BatchCreateStockDataTx creates a new StockData for each stock given in ID.
 func (store *Store) BatchCreateStockDataTx(ctx context.Context, arg BatchCreateStockDataParams) (BatchCreateStockDataResult, error) {
 	var result BatchCreateStockDataResult
 	err := store.retryableTx(ctx,
 		5,
-		5*time.Second,
+		2*time.Second,
 		func(q *Queries) error {
 			var err error
 			var newStockData StockDatum

@@ -24,7 +24,7 @@ func (store *Store) BuyStockTx(ctx context.Context, arg BuyStockTxParams) (BuySt
 	var result BuyStockTxResult
 	err := store.retryableTx(ctx,
 		5,
-		5*time.Second,
+		2*time.Second,
 		func(q *Queries) error {
 			//check if the associated UserStock exists.
 			userStock, err := q.GetUserStock(ctx, GetUserStockParams{

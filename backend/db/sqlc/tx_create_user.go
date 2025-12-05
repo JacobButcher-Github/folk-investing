@@ -20,7 +20,7 @@ func (store *Store) CreateUserTx(ctx context.Context, arg CreateUserTxParams) (C
 	var result CreateUserTxResult
 	err := store.retryableTx(ctx,
 		5,
-		5*time.Second,
+		2*time.Second,
 		func(q *Queries) error {
 			var err error
 
