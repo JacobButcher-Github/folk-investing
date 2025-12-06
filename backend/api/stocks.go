@@ -181,9 +181,29 @@ type listStockDataResponse struct {
 	StockData []db.StockDatum `json:"stock_data"`
 }
 
-// listStockData takes in an EventLabel and lists  all StockData associated with that EventLabel for all  StockIds
-func (server *Server) listStockData(ctx *gin.Context) {
+// listStockDataByLabel takes in an EventLabel and lists  all StockData associated with that EventLabel for all  StockIds
+func (server *Server) listStockDataByLabel(ctx *gin.Context) {
+	var req listStockDataRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
 
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if authPayload.Role != util.AdminRole {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(fmt.Errorf("not an admin account")))
+		return
+	}
+
+	res, err := server.store.GetStockDataByLabel(ctx, req.EventLabel)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	rsp := listStockDataResponse{
+		StockData: res,
+	}
+	ctx.JSON(http.StatusOK, rsp)
 }
 
 type updateStockDataRequest struct {
@@ -199,7 +219,16 @@ type updateStockDataResponse struct {
 	UpdatedStockData []db.StockDatum `json:"stock_data"`
 }
 
-// updateStockData takes in EventLabel and a list of UpdateStockDataParams to  update those specific  stockdatas
-func (server *Server) updateStockData(ctx *gin.Context) {
+// updateStockDataByLabel takes in EventLabel and a list of UpdateStockDataParams to  update those specific  stockdatas
+func (server *Server) updateStockDataByLabel(ctx *gin.Context) {
+
+}
+
+type deleteStockDataRequest struct {
+	EventLabel string `json:"event_label" binding:"required"`
+}
+
+// deleteStockDataByLabel takes in an EventLabel and deletes all StockData associated with it.
+func (server *Server) deleteStockData(ctx *gin.Context) {
 
 }

@@ -79,6 +79,7 @@ LIMIT
   ?;
 
 -- name: GetStocksData :many
+-- Get all data for stocks up to a limit. Meant for use by the graph  on the main page.
 SELECT
   sd.*
 FROM
@@ -100,6 +101,15 @@ WHERE
 ORDER BY
   sd.value_dollars,
   sd.value_cents;
+
+-- name: GetStockDataByLabel :many
+-- Get all data for stocks with a certain label.
+SELECT
+  *
+FROM
+  stock_data
+WHERE
+  event_label = ?;
 
 -- name: UpdateStockData :one
 UPDATE stock_data

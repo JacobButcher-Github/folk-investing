@@ -134,6 +134,45 @@ func (q *Queries) GetStockData(ctx context.Context, arg GetStockDataParams) (Sto
 	return i, err
 }
 
+const getStockDataByLabel = `-- name: GetStockDataByLabel :many
+SELECT
+  id, stock_id, event_label, value_dollars, value_cents
+FROM
+  stock_data
+WHERE
+  event_label = ?
+`
+
+// Get all data for stocks with a certain label.
+func (q *Queries) GetStockDataByLabel(ctx context.Context, eventLabel string) ([]StockDatum, error) {
+	rows, err := q.db.QueryContext(ctx, getStockDataByLabel, eventLabel)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []StockDatum{}
+	for rows.Next() {
+		var i StockDatum
+		if err := rows.Scan(
+			&i.ID,
+			&i.StockID,
+			&i.EventLabel,
+			&i.ValueDollars,
+			&i.ValueCents,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getStockFromId = `-- name: GetStockFromId :one
 SELECT
   id, name, image_path
@@ -199,6 +238,7 @@ type GetStocksDataParams struct {
 	Limit    int64   `json:"limit"`
 }
 
+// Get all data for stocks up to a limit. Meant for use by the graph  on the main page.
 func (q *Queries) GetStocksData(ctx context.Context, arg GetStocksDataParams) ([]StockDatum, error) {
 	query := getStocksData
 	var queryParams []interface{}

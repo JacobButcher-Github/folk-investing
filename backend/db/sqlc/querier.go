@@ -28,8 +28,11 @@ type Querier interface {
 	GetSession(ctx context.Context, userLogin string) (Session, error)
 	GetSiteSettings(ctx context.Context) (SiteSetting, error)
 	GetStockData(ctx context.Context, arg GetStockDataParams) (StockDatum, error)
+	// Get all data for stocks with a certain label.
+	GetStockDataByLabel(ctx context.Context, eventLabel string) ([]StockDatum, error)
 	GetStockFromId(ctx context.Context, id int64) (Stock, error)
 	GetStockFromName(ctx context.Context, name string) (Stock, error)
+	// Get all data for stocks up to a limit. Meant for use by the graph  on the main page.
 	GetStocksData(ctx context.Context, arg GetStocksDataParams) ([]StockDatum, error)
 	GetUserFromId(ctx context.Context, id int64) (User, error)
 	GetUserFromName(ctx context.Context, userLogin string) (User, error)

@@ -54,8 +54,9 @@ func (server *Server) setupRouter() {
 	//admin group
 	authRoutes.POST("admin/stocks/new_stock", server.createStock)
 	authRoutes.POST("admin/stocks/new_stock_data", server.newStockData)
-	authRoutes.POST("admin/stocks/list_stock_data", server.listStockData)
-	authRoutes.POST("admin/stocks/edit_stock_data", server.updateStockData)
+	authRoutes.POST("admin/stocks/list_stock_data_by_label", server.listStockDataByLabel)
+	authRoutes.POST("admin/stocks/edit_stock_data_by_label", server.updateStockDataByLabel)
+	authRoutes.POST("admin/stocks/delete_stock_data_by_label", server.deleteStockDataByLabel)
 	authRoutes.POST("admin/user_update", server.adminUserUpdate)
 
 	//transaction group
