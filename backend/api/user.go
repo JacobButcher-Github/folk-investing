@@ -254,9 +254,10 @@ func toUUID(v interface{}) (uuid.UUID, error) {
 }
 
 type adminUserUpdateRequest struct {
-	Role    string `json:"role"`
-	Dollars int64  `json:"dollars"`
-	Cents   int64  `json:"cents"`
+	UserLogin string `json:"user_login" binding:"required"`
+	Role      string `json:"role"`
+	Dollars   *int64 `json:"dollars"`
+	Cents     *int64 `json:"cents"`
 }
 type adminUserUpdateResponse struct {
 	UserLogin string `json:"user_login"`
@@ -276,5 +277,51 @@ func newAdminUserUpdateResponse(user db.User) adminUserUpdateResponse {
 
 // adminUserUpdate updates a user according to admin privileges. All data can be changed besides username and password.
 func (server *Server) adminUserUpdate(ctx *gin.Context) {
+	var req adminUserUpdateRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
 
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if authPayload.Role != util.AdminRole {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(fmt.Errorf("not an admin account")))
+		return
+	}
+
+	if req.Role != "" && (req.Role != util.UserRole || req.Role != util.AdminRole) {
+		ctx.JSON(http.StatusBadRequest, errorResponse(fmt.Errorf("invalid role recieved")))
+		return
+	}
+
+	var role sql.NullString
+	if req.Role != "" {
+		role = sql.NullString{String: req.Role, Valid: true}
+	}
+
+	var dollars sql.NullInt64
+	if req.Dollars != nil {
+		dollars = sql.NullInt64{Int64: *req.Dollars, Valid: true}
+	}
+
+	var cents sql.NullInt64
+	if req.Cents != nil {
+		cents = sql.NullInt64{Int64: *req.Cents, Valid: true}
+	}
+
+	args := db.AdminUpdateUserParams{
+		UserLogin: req.UserLogin,
+		Role:      role,
+		Dollars:   dollars,
+		Cents:     cents,
+	}
+
+	user, err := server.store.AdminUpdateUser(ctx, args)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	rsp := newAdminUserUpdateResponse(user)
+	ctx.JSON(http.StatusOK, rsp)
 }
