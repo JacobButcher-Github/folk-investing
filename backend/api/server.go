@@ -51,13 +51,19 @@ func (server *Server) setupRouter() {
 	router.GET("/users/:user_login", server.getUser)
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
+	//admin group
 	authRoutes.POST("admin/stocks/new_stock", server.createStock)
 	authRoutes.POST("admin/stocks/new_stock_data", server.newStockData)
 	authRoutes.POST("admin/stocks/list_stock_data", server.listStockData)
-	authRoutes.POST("admin/stocks/edit_stock_data", server.editStockData)
+	authRoutes.POST("admin/stocks/edit_stock_data", server.updateStockData)
 	authRoutes.POST("admin/user_update", server.adminUserUpdate)
+
+	//transaction group
 	authRoutes.POST("/transaction/buy_stock", server.buyTransaction)
 	authRoutes.POST("/transaction/sell_stock", server.sellTransaction)
+
+	//user group
+	authRoutes.POST("/users/update_user", server.updateUser)
 
 	server.router = router
 }

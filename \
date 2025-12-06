@@ -139,15 +139,6 @@ func (server *Server) updateUser(ctx *gin.Context) {
 	}
 
 	user, err := server.store.UpdateUser(ctx, args)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	rsp := updateUserResponse{
-		UserLogin: user.UserLogin,
-	}
-	ctx.JSON(http.StatusOK, rsp)
 }
 
 type loginUserRequest struct {
