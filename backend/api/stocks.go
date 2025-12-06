@@ -90,6 +90,7 @@ type createStockDataResponse struct {
 	StockData []db.StockDatum `json:"stock_data"`
 }
 
+// newStockData creates new stock data according to the list of StockIDs and EventLabels.
 func (server *Server) newStockData(ctx *gin.Context) {
 	var req createStockDataRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -137,6 +138,7 @@ type getStocksDataResponse struct {
 	StockData []db.StockDatum `json:"stock_data"`
 }
 
+// stocksData lists data of all stocks up to limit. Specifically for the graph on landing page.
 func (server *Server) stocksData(ctx *gin.Context) {
 	stocks, err := server.store.GetAllStocks(ctx)
 	if err != nil {
@@ -169,4 +171,35 @@ func (server *Server) stocksData(ctx *gin.Context) {
 	var rsp getStocksDataResponse
 	rsp.StockData = res
 	ctx.JSON(http.StatusOK, rsp)
+}
+
+type listStockDataRequest struct {
+	EventLabel string `json:"event_label" binding:"required"`
+}
+
+type listStockDataResponse struct {
+	StockData []db.StockDatum `json:"stock_data"`
+}
+
+// listStockData takes in an EventLabel and lists  all StockData associated with that EventLabel for all  StockIds
+func (server *Server) listStockData(ctx *gin.Context) {
+
+}
+
+type updateStockDataRequest struct {
+	EventLabel   string   `json:"event_label" binding:"required"`
+	NewLabels    []string `json:"new_label" binding:"required"`
+	StockIDs     []int64  `json:"stock_ids" binding:"required"`
+	NewIDs       []int64  `json:"new_ids" binding:"required"`
+	ValueDollars []int64  `json:"value_dollars" binding:"required"`
+	ValueCents   []int64  `json:"value_cents" binding:"required"`
+}
+
+type updateStockDataResponse struct {
+	UpdatedStockData []db.StockDatum `json:"stock_data"`
+}
+
+// updateStockData takes in EventLabel and a list of UpdateStockDataParams to  update those specific  stockdatas
+func (server *Server) updateStockData(ctx *gin.Context) {
+
 }

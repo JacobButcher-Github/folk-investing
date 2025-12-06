@@ -195,3 +195,29 @@ func toUUID(v interface{}) (uuid.UUID, error) {
 		return uuid.Nil, fmt.Errorf("unsupported UUID type %T", v)
 	}
 }
+
+type adminUserUpdateRequest struct {
+	Role    string `json:"role"`
+	Dollars int64  `json:"dollars"`
+	Cents   int64  `json:"cents"`
+}
+type adminUserUpdateResponse struct {
+	UserLogin string `json:"user_login"`
+	Role      string `json:"role"`
+	Dollars   int64  `json:"dollars"`
+	Cents     int64  `json:"cents"`
+}
+
+func newAdminUserUpdateResponse(user db.User) adminUserUpdateResponse {
+	return adminUserUpdateResponse{
+		UserLogin: user.UserLogin,
+		Role:      user.Role,
+		Dollars:   user.Dollars,
+		Cents:     user.Cents,
+	}
+}
+
+// adminUserUpdate updates a user according to admin privileges. All data can be changed besides username and password.
+func (server *Server) adminUserUpdate(ctx *gin.Context) {
+
+}
