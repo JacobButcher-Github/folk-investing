@@ -35,3 +35,11 @@ dist-ssr
 node_modules
 
 notes.md
+
+test-app.db
+test-app.db-shm
+test-app.db-wal
+
+app.db
+app.db-shm
+app.db-wal

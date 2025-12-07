@@ -1,0 +1,16 @@
+--TABLES
+CREATE TABLE IF NOT EXISTS stocks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT UNIQUE NOT NULL,
+  image_path TEXT DEFAULT '/img/default/' NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS stock_data (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  stock_id INTEGER NOT NULL,
+  event_label TEXT NOT NULL,
+  value_dollars INTEGER NOT NULL,
+  value_cents INTEGER NOT NULL,
+  UNIQUE (stock_id, event_label),
+  FOREIGN KEY (stock_id) REFERENCES stocks (id) ON DELETE CASCADE
+);
