@@ -111,6 +111,12 @@ FROM
 WHERE
   event_label = ?;
 
+-- name: DeleteStockDataByLabel :exec
+-- Delete all stock data associated with a certain label.
+DELETE FROM stock_data
+WHERE
+  event_label = ?;
+
 -- name: UpdateStockData :one
 UPDATE stock_data
 SET

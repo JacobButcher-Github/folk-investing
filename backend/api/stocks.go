@@ -1,7 +1,6 @@
 package api
 
 import (
-	"errors"
 	"fmt"
 	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
 	"home/osarukun/repos/tower-investing/backend/token"
@@ -79,11 +78,14 @@ func (server *Server) createStock(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, rsp)
 }
 
+type createStockData struct {
+	StockID      int64 `json:"stock_id" binding:"required"`
+	ValueDollars int64 `json:"value_dollars" binding:"required"`
+	ValueCents   int64 `json:"value_cents" binding:"required"`
+}
 type createStockDataRequest struct {
-	StockIDs     []int64 `json:"stock_ids" binding:"required"`
-	EventLabel   string  `json:"event_label" binding:"required"`
-	ValueDollars []int64 `json:"value_dollars" binding:"required"`
-	ValueCents   []int64 `json:"value_cents" binding:"required"`
+	EventLabel    string            `json:"event_label" binding:"required"`
+	NewStockDatas []createStockData `json:"new_stock_datas" binding:"required, dive"`
 }
 
 type createStockDataResponse struct {
@@ -98,11 +100,6 @@ func (server *Server) newStockData(ctx *gin.Context) {
 		return
 	}
 
-	if len(req.StockIDs) != len(req.ValueDollars) || len(req.ValueDollars) != len(req.ValueCents) {
-		ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("length of arrays not equal")))
-		return
-	}
-
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	if authPayload.Role != util.AdminRole {
 		ctx.JSON(http.StatusUnauthorized, errorResponse(fmt.Errorf("not an admin account")))
@@ -110,12 +107,12 @@ func (server *Server) newStockData(ctx *gin.Context) {
 	}
 
 	var newBatchStockData []db.CreateStockDataParams
-	for i := range req.StockIDs {
+	for i := range req.NewStockDatas {
 		newBatchStockData = append(newBatchStockData, db.CreateStockDataParams{
-			StockID:      req.StockIDs[i],
+			StockID:      req.NewStockDatas[i].StockID,
 			EventLabel:   req.EventLabel,
-			ValueDollars: req.ValueDollars[i],
-			ValueCents:   req.ValueCents[i],
+			ValueDollars: req.NewStockDatas[i].ValueDollars,
+			ValueCents:   req.NewStockDatas[i].ValueCents,
 		})
 	}
 
@@ -206,13 +203,17 @@ func (server *Server) listStockDataByLabel(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, rsp)
 }
 
+type stockDataUpdate struct {
+	StockID      int64   `json:"stock_id" binding:"required"`
+	NewID        *int64  `json:"new_id"`
+	NewLabel     *string `json:"new_label"`
+	ValueDollars *int64  `json:"value_dollars"`
+	ValueCents   *int64  `json:"value_cents"`
+}
+
 type updateStockDataRequest struct {
-	EventLabel   string   `json:"event_label" binding:"required"`
-	NewLabels    []string `json:"new_label" binding:"required"`
-	StockIDs     []int64  `json:"stock_ids" binding:"required"`
-	NewIDs       []int64  `json:"new_ids" binding:"required"`
-	ValueDollars []int64  `json:"value_dollars" binding:"required"`
-	ValueCents   []int64  `json:"value_cents" binding:"required"`
+	EventLabel string            `json:"event_label" binding:"required"`
+	Updates    []stockDataUpdate `json:"updates" binding:"required, dive"`
 }
 
 type updateStockDataResponse struct {
@@ -221,7 +222,43 @@ type updateStockDataResponse struct {
 
 // updateStockDataByLabel takes in EventLabel and a list of UpdateStockDataParams to  update those specific  stockdatas
 func (server *Server) updateStockDataByLabel(ctx *gin.Context) {
+	var req updateStockDataRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
 
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if authPayload.Role != util.AdminRole {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(fmt.Errorf("not an admin account")))
+		return
+	}
+
+	var updateBatchStockData []db.UpdateStockDataParams
+	for _, u := range req.Updates {
+		updateBatchStockData = append(updateBatchStockData, db.UpdateStockDataParams{
+			StockID:      u.StockID,
+			EventLabel:   req.EventLabel,
+			NewID:        util.NullInt64(u.NewID),
+			NewLabel:     util.NullString(u.NewLabel),
+			ValueDollars: util.NullInt64(u.ValueDollars),
+			ValueCents:   util.NullInt64(u.ValueCents),
+		})
+	}
+
+	arg := db.BatchUpdateStockDataParams{
+		UpdateStockData: updateBatchStockData,
+	}
+
+	result, err := server.store.BatchUpdateStockDataTx(ctx, arg)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	var rsp updateStockDataResponse
+	rsp.UpdatedStockData = result.UpdatedStockData
+	ctx.JSON(http.StatusOK, rsp)
 }
 
 type deleteStockDataRequest struct {

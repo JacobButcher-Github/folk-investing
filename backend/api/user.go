@@ -94,9 +94,9 @@ func (server *Server) getUser(ctx *gin.Context) {
 }
 
 type updateUserRequest struct {
-	UserLogin   string `json:"user_login" binding:"required"`
-	NewPassword string `json:"hashed_password"`
-	NewLogin    string `json:"new_login"`
+	UserLogin   string  `json:"user_login" binding:"required"`
+	NewPassword *string `json:"hashed_password"`
+	NewLogin    *string `json:"new_login"`
 }
 
 type updateUserResponse struct {
@@ -118,8 +118,8 @@ func (server *Server) updateUser(ctx *gin.Context) {
 	}
 
 	var hashedPassword sql.NullString
-	if req.NewPassword != "" {
-		hashed, err := util.HashPassword(req.NewPassword)
+	if req.NewPassword != nil {
+		hashed, err := util.HashPassword(*req.NewPassword)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 			return
@@ -127,15 +127,10 @@ func (server *Server) updateUser(ctx *gin.Context) {
 		hashedPassword = sql.NullString{String: hashed, Valid: true}
 	}
 
-	var newLogin sql.NullString
-	if req.NewLogin != "" {
-		newLogin = sql.NullString{String: req.NewLogin, Valid: true}
-	}
-
 	args := db.UpdateUserParams{
 		UserLogin:      req.UserLogin,
 		HashedPassword: hashedPassword,
-		NewLogin:       newLogin,
+		NewLogin:       util.NullString(req.NewLogin),
 	}
 
 	user, err := server.store.UpdateUser(ctx, args)
@@ -254,10 +249,10 @@ func toUUID(v interface{}) (uuid.UUID, error) {
 }
 
 type adminUserUpdateRequest struct {
-	UserLogin string `json:"user_login" binding:"required"`
-	Role      string `json:"role"`
-	Dollars   *int64 `json:"dollars"`
-	Cents     *int64 `json:"cents"`
+	UserLogin string  `json:"user_login" binding:"required"`
+	Role      *string `json:"role"`
+	Dollars   *int64  `json:"dollars"`
+	Cents     *int64  `json:"cents"`
 }
 type adminUserUpdateResponse struct {
 	UserLogin string `json:"user_login"`
@@ -289,31 +284,16 @@ func (server *Server) adminUserUpdate(ctx *gin.Context) {
 		return
 	}
 
-	if req.Role != "" && (req.Role != util.UserRole || req.Role != util.AdminRole) {
+	if req.Role != nil && (*req.Role != util.UserRole || *req.Role != util.AdminRole) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(fmt.Errorf("invalid role recieved")))
 		return
 	}
 
-	var role sql.NullString
-	if req.Role != "" {
-		role = sql.NullString{String: req.Role, Valid: true}
-	}
-
-	var dollars sql.NullInt64
-	if req.Dollars != nil {
-		dollars = sql.NullInt64{Int64: *req.Dollars, Valid: true}
-	}
-
-	var cents sql.NullInt64
-	if req.Cents != nil {
-		cents = sql.NullInt64{Int64: *req.Cents, Valid: true}
-	}
-
 	args := db.AdminUpdateUserParams{
 		UserLogin: req.UserLogin,
-		Role:      role,
-		Dollars:   dollars,
-		Cents:     cents,
+		Role:      util.NullString(req.Role),
+		Dollars:   util.NullInt64(req.Dollars),
+		Cents:     util.NullInt64(req.Cents),
 	}
 
 	user, err := server.store.AdminUpdateUser(ctx, args)

@@ -73,6 +73,18 @@ func (q *Queries) DeleteStock(ctx context.Context, name string) error {
 	return err
 }
 
+const deleteStockDataByLabel = `-- name: DeleteStockDataByLabel :exec
+DELETE FROM stock_data
+WHERE
+  event_label = ?
+`
+
+// Delete all stock data associated with a certain label.
+func (q *Queries) DeleteStockDataByLabel(ctx context.Context, eventLabel string) error {
+	_, err := q.db.ExecContext(ctx, deleteStockDataByLabel, eventLabel)
+	return err
+}
+
 const getAllStocks = `-- name: GetAllStocks :many
 SELECT
   id, name, image_path

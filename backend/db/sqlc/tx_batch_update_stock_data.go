@@ -14,7 +14,7 @@ type BatchUpdateStockDataResult struct {
 }
 
 // BatchUpdateStockData updates the StockData for each given StockID + EventLabel combo.
-func (store *Store) BatchUpdateStockData(ctx context.Context, arg BatchUpdateStockDataParams) (BatchUpdateStockDataResult, error) {
+func (store *Store) BatchUpdateStockDataTx(ctx context.Context, arg BatchUpdateStockDataParams) (BatchUpdateStockDataResult, error) {
 	var result BatchUpdateStockDataResult
 	err := store.retryableTx(ctx, 5, 2*time.Second, func(q *Queries) error {
 		var err error

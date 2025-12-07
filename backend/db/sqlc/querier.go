@@ -19,6 +19,8 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	CreateUserStock(ctx context.Context, arg CreateUserStockParams) (UserStock, error)
 	DeleteStock(ctx context.Context, name string) error
+	// Delete all stock data associated with a certain label.
+	DeleteStockDataByLabel(ctx context.Context, eventLabel string) error
 	DeleteUserStock(ctx context.Context, arg DeleteUserStockParams) error
 	GetAllStocks(ctx context.Context) ([]Stock, error)
 	GetEventLabel(ctx context.Context) (string, error)
