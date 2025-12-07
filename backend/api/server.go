@@ -9,10 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 
 	//local
-	"home/osarukun/repos/tower-investing/backend/token"
-	"home/osarukun/repos/tower-investing/backend/util"
+	"github.com/JacobButcher-Github/folk-investing/backend/token"
+	"github.com/JacobButcher-Github/folk-investing/backend/util"
 
-	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
+	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
 )
 
 type Server struct {

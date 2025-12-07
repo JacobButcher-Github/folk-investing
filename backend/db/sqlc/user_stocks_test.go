@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	//local
-	"home/osarukun/repos/tower-investing/backend/util"
+	"github.com/JacobButcher-Github/folk-investing/backend/util"
 )
 
 func createRandomUserStock(t *testing.T) UserStock {

@@ -9,9 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 
 	//local
-	"home/osarukun/repos/tower-investing/backend/token"
+	"github.com/JacobButcher-Github/folk-investing/backend/token"
 
-	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
+	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
 )
 
 type transactionRequest struct {

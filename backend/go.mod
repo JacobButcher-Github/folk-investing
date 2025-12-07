@@ -1,4 +1,4 @@
-module home/osarukun/repos/tower-investing/backend
+module github.com/JacobButcher-Github/folk-investing/backend
 
 go 1.25.3
 

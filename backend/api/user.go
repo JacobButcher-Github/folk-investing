@@ -4,8 +4,8 @@ import (
 	//stl
 	"database/sql"
 	"fmt"
-	"home/osarukun/repos/tower-investing/backend/token"
-	"home/osarukun/repos/tower-investing/backend/util"
+	"github.com/JacobButcher-Github/folk-investing/backend/token"
+	"github.com/JacobButcher-Github/folk-investing/backend/util"
 	"net/http"
 	"time"
 
@@ -14,7 +14,7 @@ import (
 	"github.com/google/uuid"
 
 	//local
-	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
+	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
 )
 
 type createUserRequest struct {

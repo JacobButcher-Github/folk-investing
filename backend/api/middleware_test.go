@@ -2,8 +2,8 @@ package api
 
 import (
 	"fmt"
-	"home/osarukun/repos/tower-investing/backend/token"
-	"home/osarukun/repos/tower-investing/backend/util"
+	"github.com/JacobButcher-Github/folk-investing/backend/token"
+	"github.com/JacobButcher-Github/folk-investing/backend/util"
 	"net/http"
 	"net/http/httptest"
 	"testing"

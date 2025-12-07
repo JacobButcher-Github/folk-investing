@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	migration "home/osarukun/repos/tower-investing/backend/db"
+	migration "github.com/JacobButcher-Github/folk-investing/backend/db"
 
 	_ "modernc.org/sqlite"
 )

@@ -2,9 +2,9 @@ package api
 
 import (
 	"fmt"
-	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
-	"home/osarukun/repos/tower-investing/backend/token"
-	"home/osarukun/repos/tower-investing/backend/util"
+	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
+	"github.com/JacobButcher-Github/folk-investing/backend/token"
+	"github.com/JacobButcher-Github/folk-investing/backend/util"
 	"net/http"
 	"time"
 

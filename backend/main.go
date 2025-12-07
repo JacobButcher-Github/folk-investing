@@ -4,18 +4,18 @@ import (
 	//stl
 
 	"database/sql"
-	migration "home/osarukun/repos/tower-investing/backend/db"
-	"home/osarukun/repos/tower-investing/backend/startup"
-	"home/osarukun/repos/tower-investing/backend/util"
+	migration "github.com/JacobButcher-Github/folk-investing/backend/db"
+	"github.com/JacobButcher-Github/folk-investing/backend/startup"
+	"github.com/JacobButcher-Github/folk-investing/backend/util"
 	"log"
 
 	//go package
 	_ "modernc.org/sqlite"
 
 	//local
-	"home/osarukun/repos/tower-investing/backend/api"
+	"github.com/JacobButcher-Github/folk-investing/backend/api"
 
-	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
+	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
 )
 
 const (

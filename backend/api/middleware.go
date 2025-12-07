@@ -3,7 +3,7 @@ package api
 import (
 	"errors"
 	"fmt"
-	"home/osarukun/repos/tower-investing/backend/token"
+	"github.com/JacobButcher-Github/folk-investing/backend/token"
 	"net/http"
 	"strings"
 	"time"

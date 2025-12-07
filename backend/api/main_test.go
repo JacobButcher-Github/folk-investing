@@ -2,14 +2,14 @@ package api
 
 import (
 	"database/sql"
-	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
-	"home/osarukun/repos/tower-investing/backend/util"
+	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
+	"github.com/JacobButcher-Github/folk-investing/backend/util"
 	"log"
 	"os"
 	"testing"
 	"time"
 
-	migration "home/osarukun/repos/tower-investing/backend/db"
+	migration "github.com/JacobButcher-Github/folk-investing/backend/db"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"

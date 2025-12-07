@@ -3,8 +3,8 @@ package startup
 import (
 	"context"
 	"database/sql"
-	db "home/osarukun/repos/tower-investing/backend/db/sqlc"
-	"home/osarukun/repos/tower-investing/backend/util"
+	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
+	"github.com/JacobButcher-Github/folk-investing/backend/util"
 )
 
 func CreateInitialAdmin(config util.Config, store db.Store) error {
