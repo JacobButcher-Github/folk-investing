@@ -267,5 +267,23 @@ type deleteStockDataRequest struct {
 
 // deleteStockDataByLabel takes in an EventLabel and deletes all StockData associated with it.
 func (server *Server) deleteStockData(ctx *gin.Context) {
+	var req deleteStockDataRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
 
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if authPayload.Role != util.AdminRole {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(fmt.Errorf("not an admin account")))
+		return
+	}
+
+	err := server.store.DeleteStockDataByLabel(ctx, req.EventLabel)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, nil)
 }
