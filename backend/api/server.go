@@ -58,13 +58,19 @@ func (server *Server) setupRouter() {
 	authRoutes.POST("admin/stocks/edit_stock_data_by_label", server.updateStockDataByLabel)
 	authRoutes.POST("admin/stocks/delete_stock_data_by_label", server.deleteStockDataByLabel)
 	authRoutes.POST("admin/user_update", server.adminUserUpdate)
-
-	//transaction group
-	authRoutes.POST("/transaction/buy_stock", server.buyTransaction)
-	authRoutes.POST("/transaction/sell_stock", server.sellTransaction)
+	authRoutes.POST("admin/settings_update", server.siteSettingsUpdate)
+	authRoutes.POST("admin/lockout_reset", server.adminLockout)
 
 	//user group
 	authRoutes.POST("/users/update_user", server.updateUser)
+
+	//transaction group
+	lockoutRoutes := router.Group("/").Use(
+		authMiddleware(server.tokenMaker),
+		server.LockoutMiddleware(),
+	)
+	lockoutRoutes.POST("/transaction/buy_stock", server.buyTransaction)
+	lockoutRoutes.POST("/transaction/sell_stock", server.sellTransaction)
 
 	server.router = router
 }

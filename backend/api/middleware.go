@@ -6,6 +6,7 @@ import (
 	"home/osarukun/repos/tower-investing/backend/token"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -49,5 +50,22 @@ func authMiddleware(tokenMaker token.Maker) gin.HandlerFunc {
 		ctx.Set(authorizationPayloadKey, payload)
 		ctx.Next()
 	}
+}
 
+func (server *Server) LockoutMiddleware() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		settings, err := server.store.GetSiteSettings(ctx)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to load settings"})
+			return
+		}
+
+		// Auto-detect lockout
+		if settings.Lockout == 1 || time.Now().After(settings.LockoutTimeStart) {
+			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "system locked"})
+			return
+		}
+
+		ctx.Next()
+	}
 }

@@ -66,6 +66,7 @@ SET
   ),
   value_symbol = COALESCE(sqlc.narg (value_symbol), value_symbol),
   event_label = COALESCE(sqlc.narg (event_label), event_label),
+  lockout = COALESCE(sqlc.narg (lockout), lockout),
   lockout_time_start = COALESCE(
     sqlc.narg (lockout_time_start),
     lockout_time_start

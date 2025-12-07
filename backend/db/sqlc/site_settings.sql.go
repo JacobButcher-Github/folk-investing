@@ -161,8 +161,9 @@ SET
   ),
   value_symbol = COALESCE(?2, value_symbol),
   event_label = COALESCE(?3, event_label),
+  lockout = COALESCE(?4, lockout),
   lockout_time_start = COALESCE(
-    ?4,
+    ?5,
     lockout_time_start
   )
 WHERE
@@ -173,6 +174,7 @@ type UpdateSettingsParams struct {
 	NumberOfEventsVisible sql.NullInt64  `json:"number_of_events_visible"`
 	ValueSymbol           sql.NullString `json:"value_symbol"`
 	EventLabel            sql.NullString `json:"event_label"`
+	Lockout               sql.NullInt64  `json:"lockout"`
 	LockoutTimeStart      sql.NullTime   `json:"lockout_time_start"`
 }
 
@@ -181,6 +183,7 @@ func (q *Queries) UpdateSettings(ctx context.Context, arg UpdateSettingsParams) 
 		arg.NumberOfEventsVisible,
 		arg.ValueSymbol,
 		arg.EventLabel,
+		arg.Lockout,
 		arg.LockoutTimeStart,
 	)
 	var i SiteSetting
