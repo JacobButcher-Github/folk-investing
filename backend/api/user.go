@@ -237,7 +237,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, rsp)
 }
 
-func toUUID(v interface{}) (uuid.UUID, error) {
+func toUUID(v any) (uuid.UUID, error) {
 	switch val := v.(type) {
 	case string:
 		return uuid.Parse(val)

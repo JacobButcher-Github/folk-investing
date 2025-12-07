@@ -5,6 +5,7 @@ import (
 
 	"database/sql"
 	migration "home/osarukun/repos/tower-investing/backend/db"
+	"home/osarukun/repos/tower-investing/backend/startup"
 	"home/osarukun/repos/tower-investing/backend/util"
 	"log"
 
@@ -43,6 +44,11 @@ func main() {
 	}
 
 	store := db.NewStore(conn)
+
+	//Initial admin account and settings
+	startup.CreateInitialAdmin(config, *store)
+	startup.CreateSettings(config, *store)
+
 	server, err := api.NewServer(config, store)
 	if err != nil {
 		log.Fatal("cannot create server: ", err)
