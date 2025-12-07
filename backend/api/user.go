@@ -284,7 +284,7 @@ func (server *Server) adminUserUpdate(ctx *gin.Context) {
 		return
 	}
 
-	if req.Role != nil && (*req.Role != util.UserRole || *req.Role != util.AdminRole) {
+	if req.Role != nil && *req.Role != util.UserRole && *req.Role != util.AdminRole {
 		ctx.JSON(http.StatusBadRequest, errorResponse(fmt.Errorf("invalid role recieved")))
 		return
 	}
