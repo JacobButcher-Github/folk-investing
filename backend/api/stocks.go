@@ -266,7 +266,7 @@ type deleteStockDataRequest struct {
 }
 
 // deleteStockDataByLabel takes in an EventLabel and deletes all StockData associated with it.
-func (server *Server) deleteStockData(ctx *gin.Context) {
+func (server *Server) deleteStockDataByLabel(ctx *gin.Context) {
 	var req deleteStockDataRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
