@@ -1,0 +1,14 @@
+{
+  "extends": "./.svelte-kit/tsconfig.json",
+  "compilerOptions": {
+    "module": "system",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "types": ["svelte"],
+    "noImplicitAny": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "verbatimModuleSyntax": true
+  },
+  "include": ["./src/*.ts"]
+}
