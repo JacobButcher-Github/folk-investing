@@ -9,7 +9,7 @@
   import { onMount } from "svelte";
 
 
-  let { stocks, data, settings }: { stocks: Stock[]; data: idToData; settings?: Settings} = $props();
+  let { stocks, data, settings }: { stocks: Stock[]; data: idToData; settings: Settings} = $props();
 
   onMount(async () => {
     loadEverything()
@@ -28,7 +28,7 @@
   <div class="main">
     <div class="top-main">
       <Graph stocks={stocks} data={data} settings={settings}/>
-      <Info stocks={stocks} settings={settings}/>
+      <Info settings={settings}/>
     </div>
     <div class="bottom-main">
       <!-- <Switchboard /> -->

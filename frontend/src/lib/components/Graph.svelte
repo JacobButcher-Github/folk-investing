@@ -5,7 +5,7 @@
   import type { Settings } from "../api/fetchSettings";
   import {breakpoint, initBreakpointWatcher } from "../stores/screenBreakpoints";
 
-  let { stocks, data, settings }: { stocks: Stock[]; data: idToData; settings?: Settings} = $props();
+  let { stocks, data, settings }: { stocks: Stock[]; data: idToData; settings: Settings} = $props();
 
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D | null = null;

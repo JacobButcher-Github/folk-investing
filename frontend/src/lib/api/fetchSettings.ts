@@ -2,6 +2,8 @@ export interface Settings {
   number_of_events: number;
   value_symbol: string;
   event_label: string;
+  title: string;
+  give_each_day: number;
   lockout: number;
   lockout_time: Date;
 }
