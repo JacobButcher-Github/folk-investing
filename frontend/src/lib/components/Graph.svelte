@@ -1,10 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
-  import { getStocks } from "../api/fetchStocks";
-  import { getStockData } from "../api/fetchStockData";
-  import { getSiteSettings } from "../api/fetchSettings";
   import type { Stock } from "../api/fetchStocks";
-  import type { StockDatum, idToData } from "../api/fetchStockData";
+  import type { idToData } from "../api/fetchStockData";
   import type { Settings } from "../api/fetchSettings";
   import {breakpoint, initBreakpointWatcher } from "../stores/screenBreakpoints";
 
@@ -20,12 +17,12 @@
 
   let unsubscribeBreakpoint: () => void;
 
-  onMount(async () => {
+  onMount(() => {
 
     const cleanup = initBreakpointWatcher();
     unsubscribeBreakpoint = cleanup;
 
-    const unsub = breakpoint.subscribe(bp => {
+    const unsub = breakpoint.subscribe(() => {
       resizeCanvas();
       drawCanvas();
     });
@@ -35,26 +32,15 @@
       cleanup();
     });
 
-    loadEverything().then(() => {
-      resizeCanvas();
-      drawCanvas();
-    });
 
+    if (stocks && data && settings){
+      resizeCanvas()
+      drawCanvas()
+    }
     ctx = canvas.getContext("2d");
-
-
-    await loadEverything();
-    drawCanvas();
   });
 
 
-  async function loadEverything() {
-    [stocks, data, settings] = await Promise.all([
-      getStocks(),
-      getStockData(),
-      getSiteSettings()
-    ]);
-  }
 
   function resizeCanvas() {
     canvas.width = width;
@@ -158,15 +144,3 @@
 <div class="graph-container" bind:this={parent}>
   <canvas bind:this={canvas}></canvas>
 </div>
-
-<style>
-  .graph-container {
-    width: 100%;
-    height: 100%;
-    position: relative;
-  }
-
-  canvas {
-    display: block;
-  }
-</style>
