@@ -42,10 +42,10 @@ func (server *Server) createStock(ctx *gin.Context) {
 	}
 
 	if req.information.ImagePath == "" {
-		req.information.ImagePath = "../../frontend/public/default_img.webp"
+		req.information.ImagePath = "../../frontend/public/images/default_img.webp"
 	} else {
 		var path strings.Builder
-		path.WriteString("../../frontend/public/")
+		path.WriteString("../../frontend/public/images/")
 		path.WriteString(req.information.ImagePath)
 		req.information.ImagePath = path.String()
 	}
@@ -149,8 +149,9 @@ func (server *Server) newStockData(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, rsp)
 }
 
+// Ordered and mapped by stock_id: []stock_data attributed to it
 type getStocksDataResponse struct {
-	StockData []db.StockDatum `json:"stock_data"`
+	StockData map[int64][]db.StockDatum `json:"stock_data_by_id"`
 }
 
 // stocksData lists data of all stocks up to limit. Specifically for the graph on landing page.
@@ -184,7 +185,10 @@ func (server *Server) getStocksData(ctx *gin.Context) {
 	}
 
 	var rsp getStocksDataResponse
-	rsp.StockData = res
+	for _, sd := range res {
+		rsp.StockData[sd.StockID] = append(rsp.StockData[sd.StockID], sd)
+	}
+
 	ctx.JSON(http.StatusOK, rsp)
 }
 

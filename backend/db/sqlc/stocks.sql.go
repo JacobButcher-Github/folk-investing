@@ -236,13 +236,13 @@ WHERE
     WHERE
       stock_id = sd.stock_id
     ORDER BY
-      id ASC
+      id DESC
     LIMIT
       ?
   )
 ORDER BY
-  sd.value_dollars,
-  sd.value_cents
+  sd.stock_id,
+  sd.id ASC
 `
 
 type GetStocksDataParams struct {
