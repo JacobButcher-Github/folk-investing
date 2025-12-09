@@ -2,12 +2,13 @@ package api
 
 import (
 	"fmt"
-	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
-	"github.com/JacobButcher-Github/folk-investing/backend/token"
-	"github.com/JacobButcher-Github/folk-investing/backend/util"
 	"mime/multipart"
 	"net/http"
 	"strings"
+
+	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
+	"github.com/JacobButcher-Github/folk-investing/backend/token"
+	"github.com/JacobButcher-Github/folk-investing/backend/util"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -78,6 +79,23 @@ func (server *Server) createStock(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, rsp)
 }
 
+type listStocksResponse struct {
+	Stocks []db.Stock `json:"stocks"`
+}
+
+func (server *Server) listStocks(ctx *gin.Context) {
+	stocks, err := server.store.GetAllStocks(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	rsp := listStocksResponse{
+		Stocks: stocks,
+	}
+	ctx.JSON(http.StatusOK, rsp)
+}
+
 type createStockData struct {
 	StockID      int64 `json:"stock_id" binding:"required"`
 	ValueDollars int64 `json:"value_dollars" binding:"required"`
@@ -136,7 +154,7 @@ type getStocksDataResponse struct {
 }
 
 // stocksData lists data of all stocks up to limit. Specifically for the graph on landing page.
-func (server *Server) stocksData(ctx *gin.Context) {
+func (server *Server) getStocksData(ctx *gin.Context) {
 	stocks, err := server.store.GetAllStocks(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))

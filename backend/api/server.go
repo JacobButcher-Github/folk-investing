@@ -47,7 +47,8 @@ func (server *Server) setupRouter() {
 	router.POST("/tokens/renew_access", server.renewAccessToken)
 
 	//stock data and user information (for leaderboard later probably.)
-	router.GET("stocks/stocks_data", server.stocksData)
+	router.GET("stocks/get_stocks_data", server.getStocksData)
+	router.GET("stocks/list_stocks", server.listStocks)
 	router.GET("/users/:user_login", server.getUser)
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))

@@ -1,0 +1,8 @@
+// intended for use in the main <div> of the App page. Split into flex rows of:
+// [Graph + Information]
+// [Stock Info/Toggle Buttons/Buy/Sell + Toggles]
+.main {
+  background-color: var(--background-color);
+  display: flex;
+  flex-direction: column;
+}

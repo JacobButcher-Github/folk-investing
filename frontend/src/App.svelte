@@ -1,16 +1,18 @@
 <!-- App.svelte -->
 <script lang="ts">
-  // root component logic
+  import "./stylesheets/main.scss"
+  import Graph from "./lib/components/Graph.svelte"
 </script>
 
 <main>
-  <h1>Welcome to Folk Investing</h1>
+  <div class="main">
+    <div class="top-main">
+      <Graph />
+      <!-- <Info /> -->
+    </div>
+    <div class="bottom-main">
+      <!-- <Switchboard /> -->
+      <!-- <Controller /> -->
+    </div>
+  </div>
 </main>
-
-
-<style>
-  h1 {
-      color: goldenrod;
-      font-size: 2em;
-    }
-</style>
