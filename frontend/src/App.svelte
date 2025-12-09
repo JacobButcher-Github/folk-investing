@@ -2,10 +2,11 @@
 <script lang="ts">
   import "./stylesheets/main.scss"
   import Graph from "./lib/components/Graph.svelte"
+  import Info from "./lib/components/Info.svelte"
   import { getStockData, type idToData } from "./lib/api/fetchStockData";
   import { getStocks, type Stock } from "./lib/api/fetchStocks";
   import { getSiteSettings, type Settings } from "./lib/api/fetchSettings";
-    import { onMount } from "svelte";
+  import { onMount } from "svelte";
 
 
   let { stocks, data, settings }: { stocks: Stock[]; data: idToData; settings?: Settings} = $props();
@@ -27,7 +28,7 @@
   <div class="main">
     <div class="top-main">
       <Graph stocks={stocks} data={data} settings={settings}/>
-      <!-- <Info /> -->
+      <Info stocks={stocks} settings={settings}/>
     </div>
     <div class="bottom-main">
       <!-- <Switchboard /> -->

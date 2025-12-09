@@ -2,11 +2,12 @@ package api
 
 import (
 	"fmt"
+	"net/http"
+	"time"
+
 	db "github.com/JacobButcher-Github/folk-investing/backend/db/sqlc"
 	"github.com/JacobButcher-Github/folk-investing/backend/token"
 	"github.com/JacobButcher-Github/folk-investing/backend/util"
-	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,12 +16,16 @@ type siteSettingsUpdateRequest struct {
 	NumberOfEvents *int64  `json:"number_of_events"`
 	ValueSymbol    *string `json:"value_symbol"`
 	EventLabel     *string `json:"event_label"`
+	Title          *string `json:"title"`
+	GiveEachDay    *int64  `json:"give_each_day"`
 }
 
 type siteSettingsUpdateResponse struct {
 	NumberOfEvents int64  `json:"number_of_events"`
 	ValueSymbol    string `json:"value_symbol"`
 	EventLabel     string `json:"event_label"`
+	Title          string `json:"title"`
+	GiveEachDay    int64  `json:"give_each_day"`
 }
 
 func newSiteSettingsUpdateResponse(siteSetting db.SiteSetting) siteSettingsUpdateResponse {
@@ -28,6 +33,8 @@ func newSiteSettingsUpdateResponse(siteSetting db.SiteSetting) siteSettingsUpdat
 		NumberOfEvents: siteSetting.NumberOfEventsVisible,
 		ValueSymbol:    siteSetting.ValueSymbol,
 		EventLabel:     siteSetting.EventLabel,
+		Title:          siteSetting.Title,
+		GiveEachDay:    siteSetting.GiveEachDay,
 	}
 }
 
@@ -48,6 +55,8 @@ func (server *Server) siteSettingsUpdate(ctx *gin.Context) {
 		NumberOfEventsVisible: util.NullInt64(req.NumberOfEvents),
 		ValueSymbol:           util.NullString(req.ValueSymbol),
 		EventLabel:            util.NullString(req.EventLabel),
+		Title:                 util.NullString(req.Title),
+		GiveEachDay:           util.NullInt64(req.GiveEachDay),
 	}
 
 	updatedSettings, err := server.store.UpdateSettings(ctx, arg)

@@ -20,7 +20,7 @@ INSERT INTO
     lockout_time_start
   )
 VALUES
-  (?, ?, ?, ?) RETURNING id, number_of_events_visible, value_symbol, event_label, lockout, lockout_time_start
+  (?, ?, ?, ?) RETURNING id, number_of_events_visible, value_symbol, event_label, title, give_each_day, lockout, lockout_time_start
 `
 
 type CreateSiteSettingsParams struct {
@@ -43,6 +43,8 @@ func (q *Queries) CreateSiteSettings(ctx context.Context, arg CreateSiteSettings
 		&i.NumberOfEventsVisible,
 		&i.ValueSymbol,
 		&i.EventLabel,
+		&i.Title,
+		&i.GiveEachDay,
 		&i.Lockout,
 		&i.LockoutTimeStart,
 	)
@@ -115,7 +117,7 @@ func (q *Queries) GetNumberEvents(ctx context.Context) (int64, error) {
 
 const getSiteSettings = `-- name: GetSiteSettings :one
 SELECT
-  id, number_of_events_visible, value_symbol, event_label, lockout, lockout_time_start
+  id, number_of_events_visible, value_symbol, event_label, title, give_each_day, lockout, lockout_time_start
 FROM
   site_settings
 LIMIT
@@ -130,6 +132,8 @@ func (q *Queries) GetSiteSettings(ctx context.Context) (SiteSetting, error) {
 		&i.NumberOfEventsVisible,
 		&i.ValueSymbol,
 		&i.EventLabel,
+		&i.Title,
+		&i.GiveEachDay,
 		&i.Lockout,
 		&i.LockoutTimeStart,
 	)
@@ -161,19 +165,23 @@ SET
   ),
   value_symbol = COALESCE(?2, value_symbol),
   event_label = COALESCE(?3, event_label),
-  lockout = COALESCE(?4, lockout),
+  title = COALESCE(?4, title),
+  give_each_day = COALESCE(?5, give_each_day),
+  lockout = COALESCE(?6, lockout),
   lockout_time_start = COALESCE(
-    ?5,
+    ?7,
     lockout_time_start
   )
 WHERE
-  id = 1 RETURNING id, number_of_events_visible, value_symbol, event_label, lockout, lockout_time_start
+  id = 1 RETURNING id, number_of_events_visible, value_symbol, event_label, title, give_each_day, lockout, lockout_time_start
 `
 
 type UpdateSettingsParams struct {
 	NumberOfEventsVisible sql.NullInt64  `json:"number_of_events_visible"`
 	ValueSymbol           sql.NullString `json:"value_symbol"`
 	EventLabel            sql.NullString `json:"event_label"`
+	Title                 sql.NullString `json:"title"`
+	GiveEachDay           sql.NullInt64  `json:"give_each_day"`
 	Lockout               sql.NullInt64  `json:"lockout"`
 	LockoutTimeStart      sql.NullTime   `json:"lockout_time_start"`
 }
@@ -183,6 +191,8 @@ func (q *Queries) UpdateSettings(ctx context.Context, arg UpdateSettingsParams) 
 		arg.NumberOfEventsVisible,
 		arg.ValueSymbol,
 		arg.EventLabel,
+		arg.Title,
+		arg.GiveEachDay,
 		arg.Lockout,
 		arg.LockoutTimeStart,
 	)
@@ -192,6 +202,8 @@ func (q *Queries) UpdateSettings(ctx context.Context, arg UpdateSettingsParams) 
 		&i.NumberOfEventsVisible,
 		&i.ValueSymbol,
 		&i.EventLabel,
+		&i.Title,
+		&i.GiveEachDay,
 		&i.Lockout,
 		&i.LockoutTimeStart,
 	)
