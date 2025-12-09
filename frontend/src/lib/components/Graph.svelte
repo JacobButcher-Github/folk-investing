@@ -6,36 +6,47 @@
   import type { Stock } from "../api/fetchStocks";
   import type { StockDatum, idToData } from "../api/fetchStockData";
   import type { Settings } from "../api/fetchSettings";
+  import {breakpoint, initBreakpointWatcher } from "../stores/screenBreakpoints";
+
+  let { stocks, data, settings }: { stocks: Stock[]; data: idToData; settings?: Settings} = $props();
 
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D | null = null;
-
-  let stocks: Stock[] = [];
-  let data: idToData = {};
-  let settings: Settings | null = null;
 
   let parent: HTMLDivElement;
   let width = 1200;
   let height = 600;
 
-  let observer: ResizeObserver;
+
+  let unsubscribeBreakpoint: () => void;
 
   onMount(async () => {
-    ctx = canvas.getContext("2d");
 
-    observer = new ResizeObserver(() => {
-      width = parent.clientWidth;
-      height = parent.clientHeight - 20;
+    const cleanup = initBreakpointWatcher();
+    unsubscribeBreakpoint = cleanup;
+
+    const unsub = breakpoint.subscribe(bp => {
       resizeCanvas();
       drawCanvas();
     });
-    observer.observe(parent);
+
+    onDestroy(() => {
+      unsub();
+      cleanup();
+    });
+
+    loadEverything().then(() => {
+      resizeCanvas();
+      drawCanvas();
+    });
+
+    ctx = canvas.getContext("2d");
+
 
     await loadEverything();
     drawCanvas();
   });
 
-  onDestroy(() => observer.disconnect());
 
   async function loadEverything() {
     [stocks, data, settings] = await Promise.all([
@@ -48,10 +59,6 @@
   function resizeCanvas() {
     canvas.width = width;
     canvas.height = height;
-  }
-
-  $: if (ctx && stocks.length > 0 && settings) {
-    drawCanvas();
   }
 
   function drawCanvas() {
