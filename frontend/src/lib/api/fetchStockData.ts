@@ -6,14 +6,17 @@ export interface StockDatum {
   value_cents: number;
 }
 
+export interface idToData {
+  [id: number]: StockDatum[];
+}
 interface CachedStockData {
   timestamp: number;
-  stock_data: StockDatum[];
+  stock_data: idToData;
 }
 
 const MAX_AGE = 120 * 1000; //2 minute lockout
 
-export async function getStockData(): Promise<StockDatum[]> {
+export async function getStockData(): Promise<idToData> {
   const key = `stockData`;
   const cachedRaw = localStorage.getItem(key);
 
@@ -26,7 +29,7 @@ export async function getStockData(): Promise<StockDatum[]> {
 
   const res: Response = await fetch("stocks/get_stocks_data");
   if (!res.ok) throw new Error("Failed to fetch stock data");
-  const data: StockDatum[] = await res.json();
+  const data: idToData = await res.json();
 
   const cacheEntry: CachedStockData = {
     timestamp: Date.now(),

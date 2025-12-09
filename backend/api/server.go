@@ -50,6 +50,7 @@ func (server *Server) setupRouter() {
 	router.GET("stocks/get_stocks_data", server.getStocksData)
 	router.GET("stocks/list_stocks", server.listStocks)
 	router.GET("/users/:user_login", server.getUser)
+	router.GET("/settings", server.getSiteSettings)
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 	//admin group
