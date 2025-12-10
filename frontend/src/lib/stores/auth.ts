@@ -9,10 +9,11 @@ user.subscribe((v) => {
 });
 
 export async function login(user_login: string, password: string) {
-  const res = await fetch("users/login", {
+  const res = await fetch("/users/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ user_login, password }),
+    credentials: "include",
   });
 
   if (!res.ok) {
@@ -25,8 +26,6 @@ export async function login(user_login: string, password: string) {
     session_id: data.session_id,
     access_token: data.access_token,
     access_token_expires_at: data.access_token_expires_at,
-    refresh_token: data.refresh_token,
-    refresh_token_expires_at: data.refresh_token_expires_at,
   };
 
   session.set(newSession);
@@ -35,7 +34,7 @@ export async function login(user_login: string, password: string) {
 
 export async function logout(user_login: string) {
   if (_session) {
-    await fetch("users/logout", {
+    await fetch("/users/logout", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${_session.access_token}`,
@@ -90,7 +89,7 @@ export async function authFetch(url: string, options: RequestInit = {}) {
 async function attemptRefresh(): Promise<boolean> {
   if (!_session) return false;
 
-  const res = await fetch("/api/auth/refresh", {
+  const res = await fetch("/tokens/renew_access", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
