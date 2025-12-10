@@ -93,8 +93,8 @@ async function attemptRefresh(): Promise<boolean> {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${_session.refresh_token}`,
     },
+    credentials: "include",
   });
 
   if (!res.ok) return false;
@@ -105,8 +105,6 @@ async function attemptRefresh(): Promise<boolean> {
     session_id: _session.session_id,
     access_token: data.access_token,
     access_token_expires_at: data.access_token_expires_at,
-    refresh_token: _session.refresh_token,
-    refresh_token_expires_at: _session.refresh_token_expires_at,
   };
 
   session.set(newSession);
