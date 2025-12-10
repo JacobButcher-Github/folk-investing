@@ -4,10 +4,11 @@ import (
 	//stl
 	"database/sql"
 	"fmt"
-	"github.com/JacobButcher-Github/folk-investing/backend/token"
-	"github.com/JacobButcher-Github/folk-investing/backend/util"
 	"net/http"
 	"time"
+
+	"github.com/JacobButcher-Github/folk-investing/backend/token"
+	"github.com/JacobButcher-Github/folk-investing/backend/util"
 
 	//go package
 	"github.com/gin-gonic/gin"
@@ -246,6 +247,33 @@ func toUUID(v any) (uuid.UUID, error) {
 	default:
 		return uuid.Nil, fmt.Errorf("unsupported UUID type %T", v)
 	}
+}
+
+type logoutUserRequest struct {
+	UserLogin   string `json:"user_login"`
+	AccessToken string `json:"access_token"`
+}
+
+func (server *Server) logoutUser(ctx *gin.Context) {
+	var req logoutUserRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if authPayload.UserLogin != req.UserLogin {
+		ctx.JSON(http.StatusBadRequest, errorResponse(fmt.Errorf("invalid userlogin recieved")))
+		return
+	}
+
+	err := server.store.DeleteSession(ctx, req.UserLogin)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, nil)
 }
 
 type adminUserUpdateRequest struct {

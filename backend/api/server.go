@@ -43,7 +43,8 @@ func (server *Server) setupRouter() {
 	router := gin.Default()
 	//user registration and login + token renewal
 	router.POST("/users/register", server.createUser)
-	router.POST("users/login", server.loginUser)
+	router.POST("/users/login", server.loginUser)
+	router.POST("/users/logout", server.logoutUser)
 	router.POST("/tokens/renew_access", server.renewAccessToken)
 
 	//stock data and user information (for leaderboard later probably.)

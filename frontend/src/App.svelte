@@ -31,8 +31,7 @@
       <Info settings={settings}/>
     </div>
     <div class="bottom-main">
-      <!-- <Switchboard /> -->
-      <!-- <Controller /> -->
+      <Switchboard stocks={stocks} data={data} settings={settings}/>
     </div>
   </div>
 </main>
