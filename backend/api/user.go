@@ -250,8 +250,7 @@ func toUUID(v any) (uuid.UUID, error) {
 }
 
 type logoutUserRequest struct {
-	UserLogin   string `json:"user_login"`
-	AccessToken string `json:"access_token"`
+	UserLogin string `json:"user_login"`
 }
 
 func (server *Server) logoutUser(ctx *gin.Context) {
